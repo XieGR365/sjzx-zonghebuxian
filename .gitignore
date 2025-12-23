@@ -1,0 +1,21 @@
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+node_modules/
+dist/
+build/
