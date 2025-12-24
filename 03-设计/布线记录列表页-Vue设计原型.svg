@@ -1,0 +1,368 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&amp;display=swap');
+      .text { font-family: 'Noto Sans SC', sans-serif; }
+      .title { font-size: 20px; font-weight: 600; fill: #1e293b; }
+      .subtitle { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .label { font-size: 13px; font-weight: 500; fill: #475569; }
+      .value { font-size: 13px; font-weight: 400; fill: #334155; }
+      .table-header { font-size: 13px; font-weight: 600; fill: #64748b; }
+      .table-cell { font-size: 13px; font-weight: 400; fill: #334155; }
+      .button-text { font-size: 14px; font-weight: 500; fill: #ffffff; }
+      .link-text { font-size: 13px; font-weight: 500; fill: #3b82f6; }
+      .tag-text { font-size: 12px; font-weight: 500; fill: #3b82f6; }
+      .status-success { font-size: 11px; font-weight: 500; fill: #059669; }
+      .status-warning { font-size: 11px; font-weight: 500; fill: #d97706; }
+      .pagination-text { font-size: 13px; font-weight: 400; fill: #64748b; }
+      .hint-text { font-size: 12px; font-weight: 400; fill: #94a3b8; }
+    </style>
+    
+    <filter id="shadow-sm" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.05"/>
+    </filter>
+    <filter id="shadow-md" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1400" height="900" fill="#f8fafc"/>
+
+  <!-- 顶部导航栏 -->
+  <rect x="0" y="0" width="1400" height="64" fill="#ffffff" filter="url(#shadow-sm)"/>
+  
+  <!-- Logo和标题 -->
+  <g transform="translate(24, 20)">
+    <rect x="0" y="0" width="32" height="32" rx="8" fill="#3b82f6"/>
+    <path d="M8 16 L12 12 L16 16 L20 12 L24 16" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="44" y="21" class="text title">综合布线记录管理系统</text>
+  </g>
+
+  <!-- 上传按钮 -->
+  <g transform="translate(1260, 14)" style="cursor: pointer;">
+    <rect x="0" y="0" width="116" height="36" rx="8" fill="#3b82f6" filter="url(#shadow-sm)"/>
+    <path d="M20 18 L26 12 L26 16 L34 16 L34 20 L26 20 L26 24 Z" fill="#ffffff"/>
+    <text x="44" y="23" class="text button-text">上传文件</text>
+  </g>
+
+  <!-- 主内容区 -->
+  <g transform="translate(24, 88)">
+    
+    <!-- 查询条件卡片 -->
+    <rect x="0" y="0" width="1352" height="220" rx="12" fill="#ffffff" filter="url(#shadow-sm)"/>
+    
+    <!-- 卡片标题 -->
+    <text x="24" y="32" class="text subtitle">查询条件</text>
+    
+    <!-- 机房筛选区 -->
+    <g transform="translate(24, 52)">
+      <text x="0" y="0" class="text label">机房</text>
+      
+      <!-- 已选机房标签 -->
+      <g transform="translate(0, 16)">
+        <rect x="0" y="0" width="80" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="40" y="20" class="text tag-text" text-anchor="middle">临港机房</text>
+        <circle cx="70" cy="16" r="8" fill="#3b82f6"/>
+        <path d="M66 16 L68 18 L74 12" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        
+        <rect x="88" y="0" width="80" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="128" y="20" class="text tag-text" text-anchor="middle">金桥机房</text>
+        <circle cx="158" cy="16" r="8" fill="#3b82f6"/>
+        <path d="M154 16 L156 18 L162 12" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        
+        <rect x="176" y="0" width="80" height="32" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="216" y="20" class="text tag-text" text-anchor="middle">国定机房</text>
+        <circle cx="246" cy="16" r="8" fill="#3b82f6"/>
+        <path d="M242 16 L244 18 L250 12" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      
+      <!-- 添加机房按钮 -->
+      <g transform="translate(264, 16)" style="cursor: pointer;">
+        <rect x="0" y="0" width="100" height="32" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+        <path d="M46 16 L54 16 M50 12 L50 20" stroke="#64748b" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="64" y="20" class="text label">添加机房</text>
+      </g>
+      
+      <!-- 清除筛选按钮 -->
+      <g transform="translate(372, 16)" style="cursor: pointer;">
+        <text x="0" y="20" class="text link-text">清除筛选</text>
+      </g>
+    </g>
+
+    <!-- 关键字查询区 -->
+    <g transform="translate(24, 116)">
+      <text x="0" y="0" class="text label">关键字</text>
+      <rect x="0" y="12" width="600" height="40" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+      <path d="M16 28 L20 24 L24 28" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="20" cy="32" r="6" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+      <text x="36" y="38" class="text hint-text">输入关键字搜索（支持登记表编号、IDC需求编号、线路编号等）</text>
+      
+      <!-- 快捷搜索提示 -->
+      <g transform="translate(616, 12)">
+        <rect x="0" y="0" width="120" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+        <text x="60" y="25" class="text label" text-anchor="middle" fill="#94a3b8">最近搜索</text>
+        <path d="M108 20 L112 24 L108 28" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+    <!-- 精确筛选区 -->
+    <g transform="translate(24, 176)">
+      <text x="0" y="0" class="text label">精确筛选</text>
+      
+      <!-- 线缆类型 -->
+      <g transform="translate(0, 12)" style="cursor: pointer;">
+        <rect x="0" y="0" width="140" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="23" class="text value">线缆类型</text>
+        <path d="M118 16 L122 20 L118 24" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      
+      <!-- 运营商 -->
+      <g transform="translate(152, 12)" style="cursor: pointer;">
+        <rect x="0" y="0" width="140" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="23" class="text value">运营商</text>
+        <path d="M118 16 L122 20 L118 24" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      
+      <!-- 标签齐全 -->
+      <g transform="translate(304, 12)" style="cursor: pointer;">
+        <rect x="0" y="0" width="140" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="23" class="text value">标签齐全</text>
+        <path d="M118 16 L122 20 L118 24" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      
+      <!-- 线路规范 -->
+      <g transform="translate(456, 12)" style="cursor: pointer;">
+        <rect x="0" y="0" width="140" height="36" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="12" y="23" class="text value">线路规范</text>
+        <path d="M118 16 L122 20 L118 24" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+
+    <!-- 查询和清空按钮 -->
+    <g transform="translate(1140, 176)">
+      <g transform="translate(0, 0)" style="cursor: pointer;">
+        <rect x="0" y="12" width="88" height="36" rx="8" fill="#3b82f6" filter="url(#shadow-sm)"/>
+        <text x="44" y="35" class="text button-text">查询</text>
+      </g>
+      <g transform="translate(100, 0)" style="cursor: pointer;">
+        <rect x="0" y="12" width="88" height="36" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="44" y="35" class="text label" text-anchor="middle">清空</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- 查询结果统计 -->
+  <g transform="translate(24, 332)">
+    <text x="0" y="0" class="text subtitle">找到 <tspan fill="#3b82f6" font-weight="600">156</tspan> 条记录</text>
+    <text x="160" y="0" class="text hint-text">临港机房: 45 | 金桥机房: 32 | 国定机房: 79</text>
+    
+    <!-- 导出按钮 -->
+    <g transform="translate(1200, -16)" style="cursor: pointer;">
+      <rect x="0" y="0" width="100" height="32" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+      <path d="M12 16 L20 16 L20 10 L28 16 L20 22 L20 16" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="36" y="20" class="text label">导出结果</text>
+    </g>
+  </g>
+
+  <!-- 数据表格卡片 -->
+  <g transform="translate(24, 356)">
+    <rect x="0" y="0" width="1352" height="480" rx="12" fill="#ffffff" filter="url(#shadow-sm)"/>
+    
+    <!-- 表格头部 -->
+    <rect x="0" y="0" width="1352" height="48" rx="12" fill="#f8fafc"/>
+    <rect x="0" y="36" width="1352" height="12" fill="#f8fafc"/>
+    
+    <text x="24" y="30" class="text table-header">编号</text>
+    <text x="120" y="30" class="text table-header">机房名称</text>
+    <text x="260" y="30" class="text table-header">用户单位</text>
+    <text x="420" y="30" class="text table-header">线路编号</text>
+    <text x="580" y="30" class="text table-header">A端</text>
+    <text x="780" y="30" class="text table-header">Z端</text>
+    <text x="980" y="30" class="text table-header">状态</text>
+    <text x="1080" y="30" class="text table-header">操作</text>
+    
+    <!-- 表格数据行 -->
+    <g transform="translate(0, 48)">
+      <!-- 第1行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-001</text>
+      <text x="120" y="33" class="text table-cell">临港机房</text>
+      <text x="260" y="33" class="text table-cell">东方有线</text>
+      <text x="420" y="33" class="text table-cell">4705764620ShH</text>
+      <text x="580" y="33" class="text table-cell">丽正路老芦公路光交</text>
+      <text x="780" y="33" class="text table-cell">101机房G01</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#dcfce7"/>
+      <text x="1010" y="32" class="text status-success" text-anchor="middle">正常</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+      
+      <!-- 悬停效果指示 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#f8fafc" opacity="0.5"/>
+    </g>
+    
+    <g transform="translate(0, 104)">
+      <!-- 第2行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-002</text>
+      <text x="120" y="33" class="text table-cell">临港机房</text>
+      <text x="260" y="33" class="text table-cell">科大讯飞</text>
+      <text x="420" y="33" class="text table-cell">4705764621ShH</text>
+      <text x="580" y="33" class="text table-cell">接入间A-A01-ODF3-1/2</text>
+      <text x="780" y="33" class="text table-cell">102机房G02</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#fef3c7"/>
+      <text x="1010" y="32" class="text status-warning" text-anchor="middle">警告</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+    
+    <g transform="translate(0, 160)">
+      <!-- 第3行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-003</text>
+      <text x="120" y="33" class="text table-cell">金桥机房</text>
+      <text x="260" y="33" class="text table-cell">永城资管</text>
+      <text x="420" y="33" class="text table-cell">4705764622ShH</text>
+      <text x="580" y="33" class="text table-cell">金桥机房接入间</text>
+      <text x="780" y="33" class="text table-cell">G01</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#dcfce7"/>
+      <text x="1010" y="32" class="text status-success" text-anchor="middle">正常</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+    
+    <g transform="translate(0, 216)">
+      <!-- 第4行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-004</text>
+      <text x="120" y="33" class="text table-cell">国定机房</text>
+      <text x="260" y="33" class="text table-cell">东方有线</text>
+      <text x="420" y="33" class="text table-cell">4705764623ShH</text>
+      <text x="580" y="33" class="text table-cell">国定机房接入间</text>
+      <text x="780" y="33" class="text table-cell">A01</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#dcfce7"/>
+      <text x="1010" y="32" class="text status-success" text-anchor="middle">正常</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+    
+    <g transform="translate(0, 272)">
+      <!-- 第5行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-005</text>
+      <text x="120" y="33" class="text table-cell">临港机房</text>
+      <text x="260" y="33" class="text table-cell">上海电信</text>
+      <text x="420" y="33" class="text table-cell">4705764624ShH</text>
+      <text x="580" y="33" class="text table-cell">丽正路接入间</text>
+      <text x="780" y="33" class="text table-cell">103机房G01</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#fef3c7"/>
+      <text x="1010" y="32" class="text status-warning" text-anchor="middle">警告</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+    
+    <g transform="translate(0, 328)">
+      <!-- 第6行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      <rect x="0" y="55" width="1352" height="1" fill="#f1f5f9"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-006</text>
+      <text x="120" y="33" class="text table-cell">金桥机房</text>
+      <text x="260" y="33" class="text table-cell">中国移动</text>
+      <text x="420" y="33" class="text table-cell">4705764625ShH</text>
+      <text x="580" y="33" class="text table-cell">金桥接入间</text>
+      <text x="780" y="33" class="text table-cell">G02</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#dcfce7"/>
+      <text x="1010" y="32" class="text status-success" text-anchor="middle">正常</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+    
+    <g transform="translate(0, 384)">
+      <!-- 第7行 -->
+      <rect x="0" y="0" width="1352" height="56" fill="#ffffff"/>
+      
+      <text x="24" y="33" class="text table-cell">WL-007</text>
+      <text x="120" y="33" class="text table-cell">国定机房</text>
+      <text x="260" y="33" class="text table-cell">中国联通</text>
+      <text x="420" y="33" class="text table-cell">4705764626ShH</text>
+      <text x="580" y="33" class="text table-cell">国定接入间</text>
+      <text x="780" y="33" class="text table-cell">A02</text>
+      
+      <rect x="980" y="16" width="60" height="24" rx="4" fill="#dcfce7"/>
+      <text x="1010" y="32" class="text status-success" text-anchor="middle">正常</text>
+      
+      <text x="1080" y="33" class="text link-text" style="cursor: pointer;">详情</text>
+    </g>
+  </g>
+
+  <!-- 分页控件 -->
+  <g transform="translate(24, 860)">
+    <text x="0" y="20" class="text pagination-text">共 156 条记录</text>
+    
+    <!-- 上一页按钮 -->
+    <g transform="translate(600, 0)" style="cursor: pointer;">
+      <rect x="0" y="0" width="80" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <path d="M36 16 L32 12 L32 20 Z" fill="#64748b"/>
+      <text x="44" y="20" class="text label" text-anchor="middle">上一页</text>
+    </g>
+    
+    <!-- 页码 -->
+    <g transform="translate(692, 0)">
+      <rect x="0" y="0" width="32" height="32" rx="6" fill="#3b82f6"/>
+      <text x="16" y="20" class="text button-text" text-anchor="middle">1</text>
+    </g>
+    <g transform="translate(732, 0)" style="cursor: pointer;">
+      <rect x="0" y="0" width="32" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="16" y="20" class="text label" text-anchor="middle">2</text>
+    </g>
+    <g transform="translate(772, 0)" style="cursor: pointer;">
+      <rect x="0" y="0" width="32" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="16" y="20" class="text label" text-anchor="middle">3</text>
+    </g>
+    <text x="816" y="20" class="text pagination-text">...</text>
+    <g transform="translate(840, 0)" style="cursor: pointer;">
+      <rect x="0" y="0" width="32" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="16" y="20" class="text label" text-anchor="middle">8</text>
+    </g>
+    
+    <!-- 下一页按钮 -->
+    <g transform="translate(884, 0)" style="cursor: pointer;">
+      <rect x="0" y="0" width="80" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="20" y="20" class="text label" text-anchor="middle">下一页</text>
+      <path d="M52 12 L56 16 L52 20 Z" fill="#64748b"/>
+    </g>
+    
+    <!-- 每页显示数量 -->
+    <g transform="translate(1000, 0)">
+      <text x="0" y="20" class="text pagination-text">每页显示</text>
+      <g transform="translate(80, 0)" style="cursor: pointer;">
+        <rect x="0" y="0" width="80" height="32" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+        <text x="40" y="20" class="text label" text-anchor="middle">50</text>
+        <path d="M68 16 L72 20 L68 24" stroke="#64748b" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+      <text x="172" y="20" class="text pagination-text">条</text>
+    </g>
+  </g>
+
+  <!-- 快捷键提示 -->
+  <g transform="translate(24, 900)">
+    <text x="0" y="0" class="text hint-text">快捷键: <tspan fill="#64748b">Enter</tspan> 查询 | <tspan fill="#64748b">Esc</tspan> 清空条件 | <tspan fill="#64748b">Ctrl+F</tspan> 聚焦搜索框</text>
+  </g>
+</svg>
