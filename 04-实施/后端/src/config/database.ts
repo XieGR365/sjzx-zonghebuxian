@@ -3,9 +3,9 @@ import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
 
-dotenv.config({ path: path.join(__dirname, '../后端/.env') });
+dotenv.config({ path: path.join(__dirname, '../../.env') });
 
-const dbPath = process.env.DB_PATH || path.join(__dirname, '../后端/data/wiring.db');
+const dbPath = process.env.DB_PATH || path.join(__dirname, '../../data/wiring.db');
 const dataDir = path.dirname(dbPath);
 
 if (!fs.existsSync(dataDir)) {

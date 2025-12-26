@@ -30,25 +30,28 @@
 
 ```
 综合布线记录管理系统/
-├── backend/                    # 后端服务
+├── backend/					# 后端服务
 │   ├── src/
-│   │   ├── config/            # 配置文件
-│   │   ├── controllers/        # 控制器
-│   │   ├── models/            # 数据模型
-│   │   ├── routes/            # 路由
-│   │   ├── services/          # 业务逻辑
-│   │   ├── types/             # TypeScript类型
-│   │   └── server.ts          # 服务器入口
-│   ├── uploads/               # 上传文件目录
-│   ├── data/                  # 数据库文件目录
+│   │   ├── config/			# 配置文件
+│   │   ├── controllers/		# 控制器
+│   │   ├── models/			# 数据模型
+│   │   ├── routes/			# 路由
+│   │   ├── services/			# 业务逻辑
+│   │   │   ├── DataExporter.ts		# 数据导出服务
+│   │   │   ├── ExcelParser.ts		# Excel解析服务
+│   │   │   └── StatisticsService.ts	# 统计服务
+│   │   ├── types/			# TypeScript类型
+│   │   └── server.ts			# 服务器入口
+│   ├── uploads/				# 上传文件目录
+│   ├── data/				# 数据库文件目录
 │   └── README.md
-├── frontend/                  # 前端应用
+├── frontend/					# 前端应用
 │   ├── src/
-│   │   ├── components/       # 组件
-│   │   ├── router/           # 路由
-│   │   ├── services/         # API服务
-│   │   ├── types/            # TypeScript类型
-│   │   ├── views/            # 页面
+│   │   ├── components/		# 组件
+│   │   ├── router/			# 路由
+│   │   ├── services/			# API服务
+│   │   ├── types/			# TypeScript类型
+│   │   ├── views/			# 页面
 │   │   ├── App.vue
 │   │   └── main.ts
 │   └── README.md
@@ -93,6 +96,9 @@
 - 自动解析并导入数据
 - 文件大小限制 10MB
 - 实时显示上传进度
+- **智能数据标准化**：自动标准化机房名称、线缆类型、运营商、端口格式等
+- **支持多种表头格式**：自动识别不同格式的表头，提高兼容性
+- **灵活的数据验证**：智能验证数据有效性，非严重错误仅警告，不拒绝导入
 
 ### 2. 灵活查询
 - 多条件组合查询
@@ -114,6 +120,19 @@
 - 查看记录详情
 - 端口路径可视化
 - 清空所有数据
+
+### 4. 数据导出
+- **支持多种格式**：Excel、CSV、JSON
+- **灵活导出条件**：基于当前查询条件导出
+- **友好的导出字段**：使用中文列名，便于直接使用
+- **一键导出**：简单操作，快速获取数据
+
+### 5. 数据统计和报表
+- **综合统计**：总记录数、按机房统计、按线缆类型统计、按运营商统计
+- **机房详细统计**：每个机房的线缆类型分布、运营商分布、标签齐全率、线路规范率
+- **跳数分布统计**：可视化跳数分布情况
+- **标签和规范率统计**：统计线路标签齐全率和线路规范率
+- **实时统计**：数据实时更新，反映最新状态
 
 ## 快速开始
 
@@ -253,46 +272,48 @@ npm run build
 
 ```
 综合布线记录管理系统/
-├── backend/                    # 后端服务
+├── backend/					# 后端服务
 │   ├── src/
-│   │   ├── config/            # 配置文件
-│   │   │   └── database.ts    # 数据库配置和初始化
-│   │   ├── controllers/        # 控制器层
-│   │   │   └── RecordController.ts  # 记录相关控制器
-│   │   ├── models/            # 数据模型层
-│   │   │   └── RecordModel.ts       # 记录数据模型
-│   │   ├── routes/            # 路由层
-│   │   │   └── recordRoutes.ts      # 记录相关路由
-│   │   ├── services/          # 业务逻辑层
-│   │   │   └── ExcelParser.ts       # Excel解析服务
-│   │   ├── types/             # TypeScript类型定义
-│   │   │   └── index.ts              # 共享类型
-│   │   └── server.ts          # 服务器入口
-│   ├── uploads/               # 上传文件目录
-│   ├── data/                  # 数据库文件目录
-│   ├── package.json           # 后端依赖配置
-│   ├── tsconfig.json          # TypeScript配置
-│   └── .env                   # 环境变量配置
-├── frontend/                  # 前端应用
+│   │   ├── config/			# 配置文件
+│   │   │   └── database.ts	# 数据库配置和初始化
+│   │   ├── controllers/		# 控制器层
+│   │   │   └── RecordController.ts	# 记录相关控制器
+│   │   ├── models/			# 数据模型层
+│   │   │   └── RecordModel.ts		# 记录数据模型
+│   │   ├── routes/			# 路由层
+│   │   │   └── recordRoutes.ts		# 记录相关路由
+│   │   ├── services/			# 业务逻辑层
+│   │   │   ├── DataExporter.ts		# 数据导出服务
+│   │   │   ├── ExcelParser.ts		# Excel解析服务
+│   │   │   └── StatisticsService.ts	# 统计服务
+│   │   ├── types/			# TypeScript类型定义
+│   │   │   └── index.ts				# 共享类型
+│   │   └── server.ts			# 服务器入口
+│   ├── uploads/				# 上传文件目录
+│   ├── data/				# 数据库文件目录
+│   ├── package.json				# 后端依赖配置
+│   ├── tsconfig.json				# TypeScript配置
+│   └── .env					# 环境变量配置
+├── frontend/					# 前端应用
 │   ├── src/
-│   │   ├── components/       # 可复用组件
-│   │   ├── router/           # 路由配置
-│   │   │   └── index.ts              # 路由定义
-│   │   ├── services/         # API服务
-│   │   │   └── api.ts                # API封装
-│   │   ├── types/            # TypeScript类型定义
-│   │   │   └── index.ts              # 共享类型
-│   │   ├── views/            # 页面组件
-│   │   │   ├── UploadView.vue        # 上传页面
-│   │   │   ├── RecordsView.vue       # 记录列表页面
-│   │   │   └── RecordDetailView.vue  # 记录详情页面
-│   │   ├── App.vue           # 根组件
-│   │   └── main.ts           # 应用入口
-│   ├── package.json           # 前端依赖配置
-│   ├── tsconfig.json          # TypeScript配置
-│   ├── vite.config.ts        # Vite构建配置
-│   └── index.html             # HTML入口
-└── README.md                  # 项目说明文档
+│   │   ├── components/		# 可复用组件
+│   │   ├── router/			# 路由配置
+│   │   │   └── index.ts				# 路由定义
+│   │   ├── services/			# API服务
+│   │   │   └── api.ts				# API封装
+│   │   ├── types/			# TypeScript类型定义
+│   │   │   └── index.ts				# 共享类型
+│   │   ├── views/			# 页面组件
+│   │   │   ├── UploadView.vue			# 上传页面
+│   │   │   ├── RecordsView.vue			# 记录列表页面
+│   │   │   └── RecordDetailView.vue		# 记录详情页面
+│   │   ├── App.vue				# 根组件
+│   │   └── main.ts				# 应用入口
+│   ├── package.json				# 前端依赖配置
+│   ├── tsconfig.json				# TypeScript配置
+│   ├── vite.config.ts				# Vite构建配置
+│   └── index.html				# HTML入口
+└── README.md					# 项目说明文档
 ```
 
 ### 开发指南

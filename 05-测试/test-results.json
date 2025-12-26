@@ -1,0 +1,155 @@
+[
+  {
+    "test": "清空数据库",
+    "status": "通过",
+    "statusCode": 200,
+    "response": {
+      "success": true,
+      "message": "已清空 0 条记录"
+    }
+  },
+  {
+    "test": "上传Excel文件",
+    "status": "通过",
+    "statusCode": 200,
+    "response": {
+      "success": true,
+      "message": "成功导入 3 条记录",
+      "data": {
+        "count": 3,
+        "ids": [
+          1,
+          2,
+          3
+        ]
+      }
+    }
+  },
+  {
+    "test": "查询所有记录",
+    "status": "通过",
+    "statusCode": 200,
+    "response": {
+      "success": true,
+      "data": {
+        "data": [
+          {
+            "id": 1,
+            "record_number": "TEST001",
+            "datacenter_name": "北京数据中心",
+            "idc_requirement_number": "REQ-2025-001",
+            "yes_ticket_number": "TKT-2025-001",
+            "user_unit": "中国移动",
+            "cable_type": "光纤",
+            "operator": "中国电信",
+            "circuit_number": "LINE-001",
+            "contact_person": "张三/13800138000",
+            "start_port": "ODF-01-01",
+            "hop1": "ODF-01-02",
+            "hop2": "ODF-01-03",
+            "hop3": "ODF-01-04",
+            "hop4": "ODF-01-05",
+            "hop5": "ODF-01-06",
+            "end_port": "ODF-01-06",
+            "user_cabinet": "机柜-A01",
+            "label_complete": 1,
+            "cable_standard": 1,
+            "remark": "测试数据1",
+            "created_at": "2025-12-26 05:50:00",
+            "updated_at": "2025-12-26 05:50:00"
+          },
+          {
+            "id": 2,
+            "record_number": "TEST002",
+            "datacenter_name": "上海数据中心",
+            "idc_requirement_number": "REQ-2025-002",
+            "yes_ticket_number": "TKT-2025-002",
+            "user_unit": "中国联通",
+            "cable_type": "网线",
+            "operator": "中国联通",
+            "circuit_number": "LINE-002",
+            "contact_person": "李四/13900139000",
+            "start_port": "ODF-02-01",
+            "hop1": "ODF-02-02",
+            "hop2": "ODF-02-03",
+            "hop3": "ODF-02-04",
+            "hop4": "ODF-02-05",
+            "hop5": "ODF-02-06",
+            "end_port": "ODF-02-06",
+            "user_cabinet": "机柜-A02",
+            "label_complete": 0,
+            "cable_standard": 1,
+            "remark": "测试数据2",
+            "created_at": "2025-12-26 05:50:00",
+            "updated_at": "2025-12-26 05:50:00"
+          },
+          {
+            "id": 3,
+            "record_number": "TEST003",
+            "datacenter_name": "广州数据中心",
+            "idc_requirement_number": "REQ-2025-003",
+            "yes_ticket_number": "TKT-2025-003",
+            "user_unit": "中国电信",
+            "cable_type": "光纤",
+            "operator": "中国移动",
+            "circuit_number": "LINE-003",
+            "contact_person": "王五/13700137000",
+            "start_port": "ODF-03-01",
+            "hop1": "ODF-03-02",
+            "hop2": "ODF-03-03",
+            "hop3": "ODF-03-04",
+            "hop4": "ODF-03-05",
+            "hop5": "ODF-03-06",
+            "end_port": "ODF-03-06",
+            "user_cabinet": "机柜-A03",
+            "label_complete": 1,
+            "cable_standard": 0,
+            "remark": "测试数据3",
+            "created_at": "2025-12-26 05:50:00",
+            "updated_at": "2025-12-26 05:50:00"
+          }
+        ],
+        "total": 3,
+        "page": 1,
+        "page_size": 20
+      }
+    }
+  },
+  {
+    "test": "获取机房列表",
+    "status": "通过",
+    "statusCode": 200,
+    "response": {
+      "success": true,
+      "data": [
+        "上海数据中心",
+        "北京数据中心",
+        "广州数据中心"
+      ]
+    }
+  },
+  {
+    "test": "获取筛选选项",
+    "status": "通过",
+    "statusCode": 200,
+    "response": {
+      "success": true,
+      "data": {
+        "datacenters": [
+          "上海数据中心",
+          "北京数据中心",
+          "广州数据中心"
+        ],
+        "operators": [
+          "中国电信",
+          "中国移动",
+          "中国联通"
+        ],
+        "cableTypes": [
+          "光纤",
+          "网线"
+        ]
+      }
+    }
+  }
+]
