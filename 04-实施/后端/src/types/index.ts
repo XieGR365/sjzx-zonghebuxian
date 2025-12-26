@@ -35,6 +35,10 @@ export interface QueryParams {
   cable_type?: string;
   idc_requirement_number?: string;
   yes_ticket_number?: string;
+  start_date?: string;
+  end_date?: string;
+  sort_field?: string;
+  sort_order?: 'asc' | 'desc';
   page?: number;
   page_size?: number;
 }

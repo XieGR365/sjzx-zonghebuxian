@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import recordRoutes from './routes/recordRoutes';
+import operationLogRoutes from './routes/operationLogRoutes';
+import savedQueryRoutes from './routes/savedQueryRoutes';
+import exportHistoryRoutes from './routes/exportHistoryRoutes';
 
 dotenv.config();
 
@@ -17,6 +20,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/records', recordRoutes);
+app.use('/api/operation-logs', operationLogRoutes);
+app.use('/api/saved-queries', savedQueryRoutes);
+app.use('/api/export-history', exportHistoryRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: '综合布线记录管理系统后端服务正常运行' });

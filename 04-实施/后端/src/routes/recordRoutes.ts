@@ -23,9 +23,12 @@ const upload = multer({
 router.post('/upload', upload.single('file'), RecordController.upload);
 router.get('/query', RecordController.query);
 router.get('/detail/:id', RecordController.getDetail);
+router.put('/update/:id', RecordController.update);
+router.delete('/delete/:id', RecordController.delete);
+router.post('/batch-delete', RecordController.batchDelete);
+router.delete('/clear', RecordController.clearAll);
 router.get('/datacenters', RecordController.getDatacenters);
 router.get('/filter-options', RecordController.getFilterOptions);
-router.delete('/clear', RecordController.clearAll);
 router.get('/export', RecordController.export);
 router.get('/statistics', RecordController.getStatistics);
 router.get('/statistics/datacenters', RecordController.getDatacenterStatistics);

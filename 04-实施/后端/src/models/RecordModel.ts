@@ -61,6 +61,10 @@ export class RecordModel {
       cable_type,
       idc_requirement_number,
       yes_ticket_number,
+      start_date,
+      end_date,
+      sort_field = 'created_at',
+      sort_order = 'desc',
       page = 1,
       page_size = 20
     } = params;
@@ -108,6 +112,14 @@ export class RecordModel {
       conditions.push('yes_ticket_number LIKE ?');
       values.push(`%${yes_ticket_number}%`);
     }
+    if (start_date) {
+      conditions.push('created_at >= ?');
+      values.push(start_date);
+    }
+    if (end_date) {
+      conditions.push('created_at <= ?');
+      values.push(end_date);
+    }
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
@@ -115,10 +127,20 @@ export class RecordModel {
     const countResult = countStmt.get(...values) as { total: number };
     const total = countResult.total;
 
+    const validSortFields = [
+      'id', 'record_number', 'datacenter_name', 'idc_requirement_number',
+      'yes_ticket_number', 'user_unit', 'cable_type', 'operator',
+      'circuit_number', 'start_port', 'end_port', 'user_cabinet',
+      'created_at', 'updated_at'
+    ];
+
+    const safeSortField = validSortFields.includes(sort_field) ? sort_field : 'created_at';
+    const safeSortOrder = sort_order.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
+
     const offset = (page - 1) * page_size;
     const dataStmt = db.prepare(`
       SELECT * FROM records ${whereClause}
-      ORDER BY created_at DESC
+      ORDER BY ${safeSortField} ${safeSortOrder}
       LIMIT ? OFFSET ?
     `);
     const data = dataStmt.all(...values, page_size, offset) as Record[];
@@ -134,6 +156,58 @@ export class RecordModel {
   static findById(id: number): Record | undefined {
     const stmt = db.prepare('SELECT * FROM records WHERE id = ?');
     return stmt.get(id) as Record | undefined;
+  }
+
+  static update(id: number, data: Partial<Record>): boolean {
+    const updates: string[] = [];
+    const values: any[] = [];
+
+    const allowedFields = [
+      'record_number', 'datacenter_name', 'idc_requirement_number', 'yes_ticket_number',
+      'user_unit', 'cable_type', 'operator', 'circuit_number', 'contact_person',
+      'start_port', 'hop1', 'hop2', 'hop3', 'hop4', 'hop5', 'end_port',
+      'user_cabinet', 'label_complete', 'cable_standard', 'remark'
+    ];
+
+    for (const field of allowedFields) {
+      if (field in data) {
+        updates.push(`${field} = ?`);
+        values.push(data[field as keyof Record]);
+      }
+    }
+
+    if (updates.length === 0) {
+      return false;
+    }
+
+    updates.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(id);
+
+    const stmt = db.prepare(`
+      UPDATE records
+      SET ${updates.join(', ')}
+      WHERE id = ?
+    `);
+
+    const result = stmt.run(...values);
+    return result.changes > 0;
+  }
+
+  static delete(id: number): boolean {
+    const stmt = db.prepare('DELETE FROM records WHERE id = ?');
+    const result = stmt.run(id);
+    return result.changes > 0;
+  }
+
+  static batchDelete(ids: number[]): number {
+    if (ids.length === 0) {
+      return 0;
+    }
+
+    const placeholders = ids.map(() => '?').join(',');
+    const stmt = db.prepare(`DELETE FROM records WHERE id IN (${placeholders})`);
+    const result = stmt.run(...ids);
+    return result.changes;
   }
 
   static getDatacenters(): string[] {

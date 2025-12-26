@@ -42,6 +42,39 @@ const initDb = () => {
       remark TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS operation_logs (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT,
+      username TEXT,
+      operation_type TEXT NOT NULL,
+      operation_content TEXT,
+      operation_details TEXT,
+      ip_address TEXT,
+      user_agent TEXT,
+      status TEXT DEFAULT 'success',
+      error_message TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS saved_queries (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT,
+      query_name TEXT NOT NULL,
+      query_params TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE TABLE IF NOT EXISTS export_history (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT,
+      export_type TEXT NOT NULL,
+      export_format TEXT NOT NULL,
+      record_count INTEGER,
+      file_name TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `;
 
@@ -57,7 +90,13 @@ const initDb = () => {
     'CREATE INDEX IF NOT EXISTS idx_operator ON records(operator)',
     'CREATE INDEX IF NOT EXISTS idx_cable_type ON records(cable_type)',
     'CREATE INDEX IF NOT EXISTS idx_idc_requirement_number ON records(idc_requirement_number)',
-    'CREATE INDEX IF NOT EXISTS idx_yes_ticket_number ON records(yes_ticket_number)'
+    'CREATE INDEX IF NOT EXISTS idx_yes_ticket_number ON records(yes_ticket_number)',
+    'CREATE INDEX IF NOT EXISTS idx_operation_logs_user_id ON operation_logs(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_operation_logs_operation_type ON operation_logs(operation_type)',
+    'CREATE INDEX IF NOT EXISTS idx_operation_logs_created_at ON operation_logs(created_at)',
+    'CREATE INDEX IF NOT EXISTS idx_saved_queries_user_id ON saved_queries(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_export_history_user_id ON export_history(user_id)',
+    'CREATE INDEX IF NOT EXISTS idx_export_history_created_at ON export_history(created_at)'
   ];
 
   indexes.forEach(indexSql => db.exec(indexSql));
