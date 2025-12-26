@@ -1,0 +1,30 @@
+import { Router } from 'express';
+import multer from 'multer';
+import path from 'path';
+import { RecordController } from '../controllers/RecordController';
+
+const router = Router();
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (ext !== '.xlsx' && ext !== '.xls') {
+      return cb(new Error('只支持Excel文件'));
+    }
+    cb(null, true);
+  },
+  limits: {
+    fileSize: 10 * 1024 * 1024
+  }
+});
+
+router.post('/upload', upload.single('file'), RecordController.upload);
+router.get('/query', RecordController.query);
+router.get('/detail/:id', RecordController.getDetail);
+router.get('/datacenters', RecordController.getDatacenters);
+router.get('/filter-options', RecordController.getFilterOptions);
+router.delete('/clear', RecordController.clearAll);
+
+export default router;

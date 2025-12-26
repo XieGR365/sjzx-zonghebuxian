@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: wiring-backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/data:/app/data
+      - ./backend/uploads:/app/uploads
+    restart: unless-stopped
+    environment:
+      - PORT=3001
+      - CORS_ORIGIN=http://localhost
+    networks:
+      - wiring-network
+
+  frontend:
+    build: ./frontend
+    container_name: wiring-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - wiring-network
+
+networks:
+  wiring-network:
+    driver: bridge
