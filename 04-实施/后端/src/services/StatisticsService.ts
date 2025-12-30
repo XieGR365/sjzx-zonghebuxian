@@ -1,10 +1,8 @@
 import { RecordModel } from '../models/RecordModel';
-import { Record } from '../types';
+import { Record as RecordType } from '../types';
 
 export class StatisticsService {
-  // 获取综合统计数据
   static getOverallStatistics() {
-    // 获取所有记录
     const result = RecordModel.findAll({
       page: 1,
       page_size: 10000
@@ -12,25 +10,18 @@ export class StatisticsService {
     
     const records = result.data;
     
-    // 计算各种统计指标
     const totalRecords = records.length;
     
-    // 按机房统计
     const datacenterStats = this.countByField(records, 'datacenter_name');
     
-    // 按线缆类型统计
     const cableTypeStats = this.countByField(records, 'cable_type');
     
-    // 按运营商统计
     const operatorStats = this.countByField(records, 'operator');
     
-    // 标签齐全率统计
     const labelCompleteStats = this.calculateCompletionRate(records, 'label_complete');
     
-    // 线路规范率统计
     const cableStandardStats = this.calculateCompletionRate(records, 'cable_standard');
     
-    // 跳数分布统计
     const hopCountStats = this.calculateHopCountDistribution(records);
     
     return {
@@ -45,7 +36,6 @@ export class StatisticsService {
     };
   }
   
-  // 获取按机房的详细统计
   static getDatacenterStatistics() {
     // 获取所有记录
     const result = RecordModel.findAll({
@@ -58,26 +48,20 @@ export class StatisticsService {
     // 按机房分组
     const datacenterGroups = this.groupByField(records, 'datacenter_name');
     
-    // 为每个机房生成统计数据
     const datacenterDetails = Object.entries(datacenterGroups).map(([datacenter, dcRecords]) => {
-      // 按线缆类型统计
-      const cableTypeStats = this.countByField(dcRecords, 'cable_type');
+      const cableTypeStats = this.countByField(dcRecords as RecordType[], 'cable_type');
       
-      // 按运营商统计
-      const operatorStats = this.countByField(dcRecords, 'operator');
+      const operatorStats = this.countByField(dcRecords as RecordType[], 'operator');
       
-      // 标签齐全率
-      const labelCompleteRate = this.calculateCompletionRate(dcRecords, 'label_complete');
+      const labelCompleteRate = this.calculateCompletionRate(dcRecords as RecordType[], 'label_complete');
       
-      // 线路规范率
-      const cableStandardRate = this.calculateCompletionRate(dcRecords, 'cable_standard');
+      const cableStandardRate = this.calculateCompletionRate(dcRecords as RecordType[], 'cable_standard');
       
-      // 跳数分布
-      const hopCountStats = this.calculateHopCountDistribution(dcRecords);
+      const hopCountStats = this.calculateHopCountDistribution(dcRecords as RecordType[]);
       
       return {
         datacenter,
-        totalRecords: dcRecords.length,
+        totalRecords: (dcRecords as RecordType[]).length,
         cableTypeStats,
         operatorStats,
         labelCompleteRate,
@@ -89,9 +73,8 @@ export class StatisticsService {
     return datacenterDetails;
   }
   
-  // 按字段分组统计
-  private static countByField(records: Record[], field: keyof Record) {
-    const stats: Record<string, number> = {};
+  private static countByField(records: RecordType[], field: keyof RecordType) {
+    const stats: { [key: string]: number } = {};
     
     records.forEach(record => {
       const value = record[field] as string || '未分类';
@@ -101,9 +84,8 @@ export class StatisticsService {
     return stats;
   }
   
-  // 按字段分组
-  private static groupByField(records: Record[], field: keyof Record) {
-    const groups: Record<string, Record[]> = {};
+  private static groupByField(records: RecordType[], field: keyof RecordType) {
+    const groups: { [key: string]: RecordType[] } = {};
     
     records.forEach(record => {
       const value = record[field] as string || '未分类';
@@ -116,8 +98,7 @@ export class StatisticsService {
     return groups;
   }
   
-  // 计算完成率（0/1字段）
-  private static calculateCompletionRate(records: Record[], field: keyof Record) {
+  private static calculateCompletionRate(records: RecordType[], field: keyof RecordType) {
     if (records.length === 0) {
       return {
         total: 0,
@@ -137,14 +118,12 @@ export class StatisticsService {
     };
   }
   
-  // 计算跳数分布
-  private static calculateHopCountDistribution(records: Record[]) {
-    const hopCounts: Record<string, number> = {};
+  private static calculateHopCountDistribution(records: RecordType[]) {
+    const hopCounts: { [key: string]: number } = {};
     
     records.forEach(record => {
       let hopCount = 0;
       
-      // 计算实际跳数
       if (record.hop1) hopCount++;
       if (record.hop2) hopCount++;
       if (record.hop3) hopCount++;

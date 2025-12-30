@@ -179,6 +179,7 @@
         <el-table-column prop="start_port" label="起始端口" min-width="120" show-overflow-tooltip />
         <el-table-column prop="end_port" label="目标端口" min-width="120" show-overflow-tooltip />
         <el-table-column prop="user_cabinet" label="用户机柜" min-width="100" show-overflow-tooltip />
+        <el-table-column prop="execution_date" label="执行时间" width="120" align="center" show-overflow-tooltip />
         <el-table-column label="标签齐全" width="90" align="center">
           <template #default="{ row }">
             <el-tag :type="row.label_complete ? 'success' : 'warning'" size="small">
@@ -228,13 +229,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Search, RefreshLeft, List, Delete } from '@element-plus/icons-vue';
 import { recordApi } from '@/services/api';
 import type { QueryParams, QueryResult, FilterOptions, Record } from '@/types';
 
 const router = useRouter();
+const route = useRoute();
 
 const queryParams = ref<QueryParams>({
   page: 1,
@@ -295,7 +297,13 @@ const handleRowClick = (row: Record) => {
 
 const handleViewDetail = (id: number | undefined) => {
   if (id) {
-    router.push(`/records/${id}`);
+    router.push({
+      path: `/records/${id}`,
+      query: {
+        page: queryParams.value.page,
+        page_size: queryParams.value.page_size
+      }
+    });
   }
 };
 
@@ -337,6 +345,12 @@ const formatDate = (dateStr: string | undefined) => {
 };
 
 onMounted(() => {
+  const page = route.query.page ? parseInt(route.query.page as string) : 1;
+  const pageSize = route.query.page_size ? parseInt(route.query.page_size as string) : 20;
+  
+  queryParams.value.page = page;
+  queryParams.value.page_size = pageSize;
+  
   loadFilterOptions();
   handleSearch();
 });

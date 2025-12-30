@@ -35,6 +35,12 @@
               <el-descriptions-item label="YES工单编号">
                 {{ record.yes_ticket_number || '-' }}
               </el-descriptions-item>
+              <el-descriptions-item label="执行时间">
+                {{ record.execution_date || '-' }}
+              </el-descriptions-item>
+              <el-descriptions-item label="用途">
+                {{ record.purpose || '-' }}
+              </el-descriptions-item>
             </el-descriptions>
           </div>
 
@@ -216,7 +222,15 @@ const loadRecord = async () => {
 };
 
 const goBack = () => {
-  router.back();
+  const page = route.query.page ? parseInt(route.query.page as string) : 1;
+  const pageSize = route.query.page_size ? parseInt(route.query.page_size as string) : 20;
+  router.push({
+    path: '/records',
+    query: {
+      page: page.toString(),
+      page_size: pageSize.toString()
+    }
+  });
 };
 
 const formatDate = (dateStr: string | undefined) => {

@@ -4,7 +4,9 @@ export interface Record {
   datacenter_name: string;
   idc_requirement_number?: string;
   yes_ticket_number?: string;
+  execution_date?: string;
   user_unit?: string;
+  purpose?: string;
   cable_type?: string;
   operator?: string;
   circuit_number?: string;

@@ -1,12 +1,10 @@
 import * as XLSX from 'xlsx';
-import { Record } from '../types';
+import { Record as RecordType } from '../types';
 
 export class DataExporter {
-  // 支持的导出格式
   static readonly SUPPORTED_FORMATS = ['excel', 'csv', 'json'];
 
-  // 字段映射：数据库字段 -> 中文列名
-  static readonly FIELD_MAPPING: Record<string, string> = {
+  static readonly FIELD_MAPPING: { [key: string]: string } = {
     record_number: '登记表编号',
     datacenter_name: '机房名称',
     idc_requirement_number: 'IDC需求编号',
@@ -32,7 +30,7 @@ export class DataExporter {
   };
 
   // 准备导出数据，支持自定义字段
-  private static prepareExportData(records: Record[], fields?: string[]): any[] {
+  private static prepareExportData(records: RecordType[], fields?: string[]): any[] {
     const exportFields = fields || Object.keys(this.FIELD_MAPPING);
 
     return records.map(record => {
@@ -40,7 +38,7 @@ export class DataExporter {
 
       exportFields.forEach(field => {
         if (field in record) {
-          const value = record[field as keyof Record];
+          const value = record[field as keyof RecordType];
           
           if (field === 'label_complete' || field === 'cable_standard') {
             exportRecord[this.FIELD_MAPPING[field]] = value === 1 ? '是' : '否';
@@ -55,7 +53,7 @@ export class DataExporter {
   }
 
   // 导出为Excel格式
-  static exportToExcel(records: Record[], fields?: string[]): Buffer {
+  static exportToExcel(records: RecordType[], fields?: string[]): Buffer {
     const exportData = this.prepareExportData(records, fields);
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -66,7 +64,7 @@ export class DataExporter {
   }
 
   // 导出为CSV格式
-  static exportToCSV(records: Record[], fields?: string[]): Buffer {
+  static exportToCSV(records: RecordType[], fields?: string[]): Buffer {
     const exportData = this.prepareExportData(records, fields);
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -74,7 +72,7 @@ export class DataExporter {
   }
 
   // 导出为JSON格式
-  static exportToJSON(records: Record[], fields?: string[]): Buffer {
+  static exportToJSON(records: RecordType[], fields?: string[]): Buffer {
     const exportFields = fields || Object.keys(this.FIELD_MAPPING);
 
     const exportData = records.map(record => {
@@ -82,7 +80,7 @@ export class DataExporter {
 
       exportFields.forEach(field => {
         if (field in record) {
-          exportRecord[field] = record[field as keyof Record];
+          exportRecord[field] = record[field as keyof RecordType];
         }
       });
 
@@ -93,7 +91,7 @@ export class DataExporter {
   }
 
   // 根据格式导出数据
-  static export(records: Record[], format: string, fields?: string[]): { buffer: Buffer; mimeType: string; extension: string } {
+  static export(records: RecordType[], format: string, fields?: string[]): { buffer: Buffer; mimeType: string; extension: string } {
     let buffer: Buffer;
     let mimeType: string;
     let extension: string;

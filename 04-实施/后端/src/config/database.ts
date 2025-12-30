@@ -24,7 +24,9 @@ const initDb = () => {
       datacenter_name TEXT NOT NULL,
       idc_requirement_number TEXT,
       yes_ticket_number TEXT,
+      execution_date TEXT,
       user_unit TEXT,
+      purpose TEXT,
       cable_type TEXT,
       operator TEXT,
       circuit_number TEXT,
@@ -79,6 +81,19 @@ const initDb = () => {
   `;
 
   db.exec(createTableSql);
+
+  const migrateDb = () => {
+    try {
+      db.exec('ALTER TABLE records ADD COLUMN execution_date TEXT');
+    } catch (e) {
+    }
+    try {
+      db.exec('ALTER TABLE records ADD COLUMN purpose TEXT');
+    } catch (e) {
+    }
+  };
+
+  migrateDb();
 
   const indexes = [
     'CREATE INDEX IF NOT EXISTS idx_datacenter_name ON records(datacenter_name)',

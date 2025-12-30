@@ -6,10 +6,10 @@ export class RecordModel {
     const stmt = db.prepare(`
       INSERT INTO records (
         record_number, datacenter_name, idc_requirement_number, yes_ticket_number,
-        user_unit, cable_type, operator, circuit_number, contact_person,
-        start_port, hop1, hop2, hop3, hop4, hop5, end_port, user_cabinet,
-        label_complete, cable_standard, remark
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        execution_date, user_unit, purpose, cable_type, operator, circuit_number,
+        contact_person, start_port, hop1, hop2, hop3, hop4, hop5, end_port,
+        user_cabinet, label_complete, cable_standard, remark
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     const result = stmt.run(
@@ -17,7 +17,9 @@ export class RecordModel {
       record.datacenter_name,
       record.idc_requirement_number || null,
       record.yes_ticket_number || null,
+      record.execution_date || null,
       record.user_unit || null,
+      record.purpose || null,
       record.cable_type || null,
       record.operator || null,
       record.circuit_number || null,
@@ -164,8 +166,8 @@ export class RecordModel {
 
     const allowedFields = [
       'record_number', 'datacenter_name', 'idc_requirement_number', 'yes_ticket_number',
-      'user_unit', 'cable_type', 'operator', 'circuit_number', 'contact_person',
-      'start_port', 'hop1', 'hop2', 'hop3', 'hop4', 'hop5', 'end_port',
+      'execution_date', 'user_unit', 'purpose', 'cable_type', 'operator', 'circuit_number',
+      'contact_person', 'start_port', 'hop1', 'hop2', 'hop3', 'hop4', 'hop5', 'end_port',
       'user_cabinet', 'label_complete', 'cable_standard', 'remark'
     ];
 

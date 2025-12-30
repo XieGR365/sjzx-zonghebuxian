@@ -521,7 +521,7 @@ export class RecordController {
 
   static async clearAll(req: Request, res: Response): Promise<void> {
     try {
-      const result = RecordModel.clearAll();
+      const result = RecordModel.deleteAll();
 
       await OperationLogService.log({
         operation_type: OperationLogService.OPERATION_TYPES.BATCH_DELETE,

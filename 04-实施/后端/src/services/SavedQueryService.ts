@@ -56,7 +56,7 @@ export class SavedQueryService {
       try {
         item.query_params = JSON.parse(item.query_params as any);
       } catch (e) {
-        item.query_params = {};
+        item.query_params = "{}";
       }
     });
 
@@ -78,7 +78,7 @@ export class SavedQueryService {
     try {
       result.query_params = JSON.parse(result.query_params as any);
     } catch (e) {
-      result.query_params = {};
+      result.query_params = "{}";
     }
 
     return result;

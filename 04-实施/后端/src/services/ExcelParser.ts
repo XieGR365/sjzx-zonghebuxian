@@ -1,19 +1,20 @@
 import * as XLSX from 'xlsx';
-import { Record } from '../types';
+import { Record as RecordType } from '../types';
 
 export class ExcelParser {
-  // 支持的表头映射，每个字段支持多个可能的表头名称
-  private static readonly HEADER_MAPPINGS: Record<string, string[]> = {
-    record_number: ['登记表编号', '记录编号', '编号', '序号', '记录号', 'ID', 'id'],
+  private static readonly HEADER_MAPPINGS: { [key: string]: string[] } = {
+    record_number: ['登记表编号', '记录编号', '编号', '序号', '记录号', 'ID', 'id', 'No', 'NO'],
     datacenter_name: ['机房名称', '机房', '数据中心', '中心名称', '机房地点', '站点名称'],
     idc_requirement_number: ['IDC需求编号', 'IDC编号', '需求编号', 'IDC需求', '需求ID'],
     yes_ticket_number: ['YES工单编号', '工单编号', 'YES编号', '工单ID', '工单号'],
-    user_unit: ['用户单位', '单位', '客户单位', '使用单位', '客户名称'],
+    execution_date: ['执行时间', '实施时间', '完成时间', '开通时间', '部署时间', '时间'],
+    user_unit: ['用户单位', '单位', '客户单位', '使用单位', '客户名称', '用户'],
+    purpose: ['用途', '使用用途', '业务用途', '线路用途', '用途说明'],
     cable_type: ['线缆类型', '线缆', '类型', '线类型', '线种', '线缆种类'],
     operator: ['运营商', '运行商', '营运商', '电信运营商', '服务提供商'],
-    circuit_number: ['线路编号', '线路', '电路编号', '电路', '电路号', '线路ID'],
-    contact_person: ['报障人/联系方式', '联系人', '联系电话', '联系方式', '联系人电话', '联系信息'],
-    start_port: ['起始端口（A端）', '起始端口', 'A端端口', '起点', '起始点', 'A端'],
+    circuit_number: ['线路编号', '线路', '电路编号', '电路', '电路号', '线路ID', '运营商编号'],
+    contact_person: ['报障人/联系方式', '联系人', '联系电话', '联系方式', '联系人电话', '联系信息', '报障人'],
+    start_port: ['起始端口（A端）', '起始端口', 'A端端口', '起点', '起始点', 'A端', '运营商端口'],
     hop1: ['一跳', '中间节点1', '节点1', '跳接1', '转接1'],
     hop2: ['二跳', '中间节点2', '节点2', '跳接2', '转接2'],
     hop3: ['三跳', '中间节点3', '节点3', '跳接3', '转接3'],
@@ -26,7 +27,7 @@ export class ExcelParser {
     remark: ['备注', '说明', '备注信息', '备注栏', '说明信息']
   };
 
-  static parse(buffer: Buffer): { records: Record[]; errors: string[] } {
+  static parse(buffer: Buffer): { records: RecordType[]; errors: string[] } {
     const errors: string[] = [];
     let workbook;
 
@@ -34,8 +35,9 @@ export class ExcelParser {
       // 尝试读取Excel文件
       workbook = XLSX.read(buffer, { 
         type: 'buffer',
-        cellDates: true,
-        raw: false
+        cellDates: false,
+        raw: false,
+        dateNF: 'yyyy/mm/dd'
       });
     } catch (error) {
       errors.push(`无法读取Excel文件: ${error instanceof Error ? error.message : '未知错误'}`);
@@ -65,20 +67,70 @@ export class ExcelParser {
 
     // 识别表头行
     const headerRowIndex = this.findHeaderRow(jsonData);
-    const headers = jsonData[headerRowIndex].map((h: any) => String(h || '').trim());
-    const records: Record[] = [];
+    let headers = jsonData[headerRowIndex].map((h: any) => String(h || '').trim());
 
-    // 从表头行下一行开始解析数据
-    for (let i = headerRowIndex + 1; i < jsonData.length; i++) {
+    // 检查是否是多行表头结构，如果是则合并表头
+    if (headerRowIndex + 1 < jsonData.length) {
+      const nextRow = jsonData[headerRowIndex + 1];
+      if (nextRow) {
+        const nextRowHeaders = nextRow.map((h: any) => String(h || '').trim());
+        const hasSubHeaders = nextRowHeaders.some(h => 
+          h && (h.includes('跳') || h.includes('节点') || h.includes('端口'))
+        );
+
+        // 如果下一行包含子表头，则合并表头
+        if (hasSubHeaders) {
+          const mergedHeaders: string[] = [];
+          for (let i = 0; i < Math.max(headers.length, nextRowHeaders.length); i++) {
+            const header1 = headers[i] || '';
+            const header2 = nextRowHeaders[i] || '';
+            
+            // 如果第二行有内容，优先使用第二行的内容
+            if (header2 && header2.trim() !== '') {
+              mergedHeaders.push(header2);
+            } else {
+              mergedHeaders.push(header1);
+            }
+          }
+          headers = mergedHeaders;
+        }
+      }
+    }
+
+    const records: RecordType[] = [];
+
+    // 确定数据行的起始位置
+    let dataStartRow = headerRowIndex + 1;
+    
+    // 检查是否是多行表头结构
+    if (headerRowIndex + 1 < jsonData.length) {
+      const nextRow = jsonData[headerRowIndex + 1];
+      if (nextRow) {
+        const nextRowHeaders = nextRow.map((h: any) => String(h || '').trim());
+        const hasSubHeaders = nextRowHeaders.some(h => 
+          h && (h.includes('跳') || h.includes('节点') || h.includes('端口'))
+        );
+
+        // 如果下一行包含子表头，数据行从headerRowIndex + 2开始
+        if (hasSubHeaders) {
+          dataStartRow = headerRowIndex + 2;
+        }
+      }
+    }
+
+    // 从数据行开始解析数据
+    for (let i = dataStartRow; i < jsonData.length; i++) {
       const row = jsonData[i];
       if (!row || row.length === 0) continue;
 
-      const record: Record = {
+      const record: RecordType = {
         record_number: this.getValue(row, headers, this.HEADER_MAPPINGS.record_number) || '',
         datacenter_name: this.getValue(row, headers, this.HEADER_MAPPINGS.datacenter_name) || '',
         idc_requirement_number: this.getValue(row, headers, this.HEADER_MAPPINGS.idc_requirement_number),
         yes_ticket_number: this.getValue(row, headers, this.HEADER_MAPPINGS.yes_ticket_number),
+        execution_date: this.getValue(row, headers, this.HEADER_MAPPINGS.execution_date),
         user_unit: this.getValue(row, headers, this.HEADER_MAPPINGS.user_unit),
+        purpose: this.getValue(row, headers, this.HEADER_MAPPINGS.purpose),
         cable_type: this.getValue(row, headers, this.HEADER_MAPPINGS.cable_type),
         operator: this.getValue(row, headers, this.HEADER_MAPPINGS.operator),
         circuit_number: this.getValue(row, headers, this.HEADER_MAPPINGS.circuit_number),
@@ -132,8 +184,11 @@ export class ExcelParser {
       Object.values(this.HEADER_MAPPINGS).forEach(expectedHeaders => {
         for (const expectedHeader of expectedHeaders) {
           if (rowHeaders.some(header => 
-            header && header.includes(expectedHeader) || 
-            expectedHeader.includes(header)
+            header && (header === expectedHeader || 
+             header.includes(expectedHeader) || 
+             expectedHeader.includes(header) ||
+             header.replace(/[^\w]/g, '') === expectedHeader.replace(/[^\w]/g, '') ||
+             header.toLowerCase() === expectedHeader.toLowerCase())
           )) {
             matchCount++;
             break;
@@ -147,21 +202,40 @@ export class ExcelParser {
       }
     }
 
+    // 检查是否是多行表头结构（如第1行有基础表头，第2行有子表头）
+    if (headerRowIndex + 1 < data.length) {
+      const nextRow = data[headerRowIndex + 1];
+      if (nextRow) {
+        const nextRowHeaders = nextRow.map((h: any) => String(h || '').trim());
+        const hasSubHeaders = nextRowHeaders.some(h => 
+          h && (h.includes('跳') || h.includes('节点') || h.includes('端口'))
+        );
+        
+        // 如果下一行包含子表头（如一跳、二跳等），则使用多行表头
+        if (hasSubHeaders) {
+          return headerRowIndex;
+        }
+      }
+    }
+
     return headerRowIndex;
   }
 
   // 增强的getValue方法，支持更灵活的匹配
   private static getValue(row: any[], headers: string[], fieldNames: string[]): string | undefined {
-    // 尝试多种匹配策略
-    
-    // 策略1: 精确匹配或包含匹配
+    // 策略1: 精确匹配（最高优先级）
+    for (const fieldName of fieldNames) {
+      const index = headers.findIndex(h => h === fieldName);
+      if (index !== -1 && index < row.length) {
+        const value = row[index];
+        return this.cleanValue(value);
+      }
+    }
+
+    // 策略2: 表头包含字段名（中等优先级）
     for (const fieldName of fieldNames) {
       const index = headers.findIndex(h => 
-        h && (h === fieldName || 
-             h.includes(fieldName) || 
-             fieldName.includes(h) ||
-             h.replace(/[^\w]/g, '') === fieldName.replace(/[^\w]/g, '') ||
-             h.toLowerCase() === fieldName.toLowerCase())
+        h && h.includes(fieldName) && h.length > fieldName.length
       );
       if (index !== -1 && index < row.length) {
         const value = row[index];
@@ -169,7 +243,18 @@ export class ExcelParser {
       }
     }
 
-    // 策略2: 尝试移除空格和特殊字符后的匹配
+    // 策略3: 字段名包含表头（较低优先级）
+    for (const fieldName of fieldNames) {
+      const index = headers.findIndex(h => 
+        h && fieldName.includes(h) && fieldName.length > h.length
+      );
+      if (index !== -1 && index < row.length) {
+        const value = row[index];
+        return this.cleanValue(value);
+      }
+    }
+
+    // 策略4: 移除空格和特殊字符后的匹配（最低优先级）
     const cleanedHeaders = headers.map(h => h && h.replace(/[^\w]/g, '').toLowerCase());
     for (const fieldName of fieldNames) {
       const cleanedFieldName = fieldName.replace(/[^\w]/g, '').toLowerCase();
@@ -189,6 +274,15 @@ export class ExcelParser {
       return undefined;
     }
 
+    // 检查是否是Excel日期序列号
+    if (typeof value === 'number' && value > 20000 && value < 60000) {
+      const date = new Date((value - 25569) * 86400 * 1000);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}/${month}/${day}`;
+    }
+
     let cleaned = String(value).trim();
     
     // 移除多余的空格和特殊字符
@@ -204,7 +298,7 @@ export class ExcelParser {
   }
 
   // 数据验证
-  private static validateRecord(record: Record, rowNumber: number): string[] {
+  private static validateRecord(record: RecordType, rowNumber: number): string[] {
     const errors: string[] = [];
 
     // 基本验证：至少需要一个标识符（放宽条件，允许更多字段作为标识符）
@@ -244,7 +338,7 @@ export class ExcelParser {
   }
 
   // 数据清洗
-  private static cleanRecord(record: Record): void {
+  private static cleanRecord(record: RecordType): void {
     // 标准化线缆类型（增强处理，支持数字类型和更多格式）
     if (record.cable_type) {
       const cableTypeMap: Record<string, string> = {
@@ -270,12 +364,32 @@ export class ExcelParser {
       
       const lowerType = record.cable_type.toLowerCase();
       
-      // 检查是否是数字类型的线缆类型
       if (/^\d+$/.test(record.cable_type)) {
-        // 数字类型，使用默认映射
+        const cableTypeMap: { [key: string]: string } = {
+          '1': '光纤',
+          '2': '网线',
+          '3': '同轴电缆',
+          '4': '电话线',
+          '5': '其他'
+        };
         record.cable_type = cableTypeMap[record.cable_type] || record.cable_type;
       } else {
-        // 文本类型，使用包含匹配
+        const cableTypeMap: { [key: string]: string } = {
+          '光纤': '光纤',
+          '网线': '网线',
+          '同轴电缆': '同轴电缆',
+          '电话线': '电话线',
+          '光缆': '光纤',
+          '双绞线': '网线',
+          'cat5': '网线',
+          'cat6': '网线',
+          'cat7': '网线',
+          '五类线': '网线',
+          '六类线': '网线',
+          '超五类': '网线',
+          '超六类': '网线'
+        };
+        
         for (const [key, value] of Object.entries(cableTypeMap)) {
           if (lowerType.includes(key) || lowerType === key) {
             record.cable_type = value;
@@ -285,9 +399,8 @@ export class ExcelParser {
       }
     }
 
-    // 标准化运营商
     if (record.operator) {
-      const operatorMap: Record<string, string> = {
+      const operatorMap: { [key: string]: string } = {
         '电信': '中国电信',
         '移动': '中国移动',
         '联通': '中国联通',
@@ -308,13 +421,12 @@ export class ExcelParser {
       const lowerOperator = record.operator.toLowerCase();
       for (const [key, value] of Object.entries(operatorMap)) {
         if (lowerOperator.includes(key) || lowerOperator === key) {
-          record.operator = value;
+          record.operator = value as string;
           break;
         }
       }
     }
 
-    // 标准化机房名称
     if (record.datacenter_name) {
       // 移除冗余信息，提取核心机房名称
       let cleanedName = record.datacenter_name.trim();
@@ -342,8 +454,7 @@ export class ExcelParser {
       // 移除ODF架编号等特殊格式信息
       cleanedName = cleanedName.replace(/ODF架编号：|odf架编号：|\([^)]*\)/g, '').trim();
       
-      // 标准化常见机房名称
-      const datacenterMap: Record<string, string> = {
+      const datacenterMap: { [key: string]: string } = {
         '临港二期': '临港二期',
         '唐镇': '唐镇',
         '国定': '国定',
