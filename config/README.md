@@ -147,7 +147,7 @@
 
 ```bash
 git clone <repository-url>
-cd sjzx-zonghebuxian/04-实施
+cd sjzx-zonghebuxian
 ```
 
 ### 2. 安装后端依赖

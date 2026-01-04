@@ -2,27 +2,36 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build: ../backend
     container_name: wiring-backend
     ports:
       - "3001:3001"
     volumes:
-      - ./backend/data:/app/data
-      - ./backend/uploads:/app/uploads
+      - ../backend/data:/app/data
+      - ../backend/uploads:/app/uploads
     restart: unless-stopped
     environment:
       - PORT=3001
       - CORS_ORIGIN=http://localhost
+      - DB_PATH=/app/data/wiring.db
+      - UPLOAD_DIR=/app/uploads
     networks:
       - wiring-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
-    build: ./frontend
+    build: ../frontend
     container_name: wiring-frontend
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
     networks:
       - wiring-network

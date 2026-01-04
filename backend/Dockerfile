@@ -10,6 +10,8 @@ RUN npm run build
 
 RUN mkdir -p data uploads
 
+RUN apk add --no-cache wget
+
 EXPOSE 3001
 
 CMD ["npm", "start"]
