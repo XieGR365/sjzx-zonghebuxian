@@ -22,6 +22,12 @@ const routes: RouteRecordRaw[] = [
     name: 'RecordDetail',
     component: () => import('@/views/RecordDetailView.vue'),
     meta: { title: '记录详情' }
+  },
+  {
+    path: '/statistics/jump-fiber',
+    name: 'JumpFiberStatistics',
+    component: () => import('@/views/JumpFiberStatisticsView.vue'),
+    meta: { title: '跳纤统计' }
   }
 ];
 

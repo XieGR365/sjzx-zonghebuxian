@@ -40,6 +40,7 @@ export interface QueryParams {
   user_unit?: string;
   start_date?: string;
   end_date?: string;
+  cable_standard?: number;
   sort_field?: string;
   sort_order?: 'asc' | 'desc';
   page?: number;

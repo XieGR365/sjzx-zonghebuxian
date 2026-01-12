@@ -73,9 +73,20 @@
         :sub-title="uploadResult.message"
       >
         <template #extra v-if="uploadResult.success && uploadResult.data">
-          <el-statistic title="成功导入记录数" :value="uploadResult.data.count">
-            <template #suffix>条</template>
-          </el-statistic>
+          <div class="statistics-container">
+            <el-row :gutter="20">
+              <el-col :span="12">
+                <el-statistic title="新增记录数" :value="uploadResult.data.insertedCount">
+                  <template #suffix>条</template>
+                </el-statistic>
+              </el-col>
+              <el-col :span="12">
+                <el-statistic title="更新记录数" :value="uploadResult.data.updatedCount">
+                  <template #suffix>条</template>
+                </el-statistic>
+              </el-col>
+            </el-row>
+          </div>
           <el-button type="primary" @click="goToRecords">
             查看记录列表
             <el-icon class="el-icon--right"><ArrowRight /></el-icon>
@@ -99,7 +110,7 @@ const uploadRef = ref();
 const fileList = ref<UploadUserFile[]>([]);
 const selectedFile = ref<File | null>(null);
 const uploading = ref(false);
-const uploadResult = ref<{ success: boolean; message: string; data?: { count: number } } | null>(null);
+const uploadResult = ref<{ success: boolean; message: string; data?: { insertedCount: number; updatedCount: number; insertedIds: number[]; updatedIds: number[] } } | null>(null);
 
 const handleFileChange = (file: UploadFile) => {
   if (file.raw) {
@@ -269,5 +280,20 @@ const goToRecords = () => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.statistics-container {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+  border-radius: 12px;
+}
+
+:deep(.el-row) {
+  margin: 0 !important;
+}
+
+:deep(.el-col) {
+  padding: 0 !important;
 }
 </style>

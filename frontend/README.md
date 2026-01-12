@@ -197,6 +197,47 @@ npm run preview
 - 动态渲染端口路径
 - 状态标签使用不同颜色
 
+### 4. 跳纤统计页面 (JumpFiberStatisticsView)
+
+**功能描述**: 按机房分组展示跳纤统计信息，支持按状态筛选和导出报表
+
+**主要功能**:
+- 按机房分组展示跳纤统计卡片
+  - 显示每个机房的跳纤总数
+  - 显示每个机房的在用线路数量和比例
+  - 显示每个机房的已拆除线路数量和比例
+  - 使用进度条可视化展示线路状态分布
+- 点击机房卡片查看该机房的详细跳纤记录
+  - 支持按线路状态筛选（全部、在用、已拆除）
+  - 分页显示详细记录
+  - 显示记录的关键信息（登记表编号、线路编号、端口等）
+- 导出统计报表功能
+  - 一键导出所有机房的统计数据为Excel文件
+  - 导出文件包含总体统计、机房详细统计和导出信息
+  - 自动生成带时间戳的文件名
+  - 导出过程中显示加载状态提示
+  - 导出成功后显示成功提示
+
+**技术实现**:
+- 使用 Element Plus 的 Card、Progress、Table、Pagination 组件
+- 响应式卡片布局，适配不同屏幕尺寸
+- Map 数据结构管理每个机房的详细记录和分页状态
+- Axios 发送 GET 请求获取统计数据
+- Blob 对象处理 Excel 文件下载
+- Element Plus 的 Message 组件显示导出状态提示
+
+**导出功能使用**:
+1. 在跳纤统计页面，点击右上角的"导出报表"按钮
+2. 系统显示"正在导出报表，请稍候..."提示
+3. 后端生成 Excel 文件并返回
+4. 浏览器自动下载文件（文件名格式：跳纤统计报表_YYYY-MM-DD.xlsx）
+5. 系统显示"报表导出成功"提示
+
+**导出文件内容**:
+- 总体统计部分：跳纤总数、在用线路总数、已拆除线路总数
+- 机房详细统计部分：机房名称、跳纤总数、在用线路、在用比例、已拆除线路、已拆除比例
+- 导出信息部分：导出时间、数据来源
+
 ## 路由配置
 
 | 路径 | 组件 | 说明 | 权限 |
@@ -205,6 +246,7 @@ npm run preview
 | `/upload` | UploadView | 上传文件页面 | 公开 |
 | `/records` | RecordsView | 布线记录列表页面 | 公开 |
 | `/records/:id` | RecordDetailView | 记录详情页面 | 公开 |
+| `/jump-fiber-statistics` | JumpFiberStatisticsView | 跳纤统计页面 | 公开 |
 
 ### 路由守卫
 
@@ -271,6 +313,8 @@ api.interceptors.response.use(
 | `getDatacenters()` | 获取机房列表 | - | Promise<string[]> |
 | `getFilterOptions()` | 获取筛选选项 | - | Promise<FilterOptions> |
 | `clearAllData()` | 清空所有数据 | - | Promise<ClearResult> |
+| `getJumpFiberStatistics(params)` | 获取跳纤统计数据 | StatisticsParams | Promise<StatisticsResult> |
+| `exportJumpFiberStatistics()` | 导出跳纤统计报表 | - | Promise<Blob> |
 
 ## 组件说明
 
@@ -303,6 +347,13 @@ api.interceptors.response.use(
 - 记录详情展示
 - 端口路径可视化
 - 返回按钮
+
+#### JumpFiberStatisticsView.vue
+- 跳纤统计卡片展示
+- 机房详细记录表格
+- 状态筛选功能
+- 导出报表按钮
+- 分页组件
 
 ## 设计特点
 

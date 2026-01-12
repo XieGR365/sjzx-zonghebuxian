@@ -32,5 +32,7 @@ router.get('/filter-options', RecordController.getFilterOptions);
 router.get('/export', RecordController.export);
 router.get('/statistics', RecordController.getStatistics);
 router.get('/statistics/datacenters', RecordController.getDatacenterStatistics);
+router.get('/statistics/jump-fiber', RecordController.getJumpFiberStatistics);
+router.get('/statistics/jump-fiber/export', RecordController.exportJumpFiberStatistics);
 
 export default router;

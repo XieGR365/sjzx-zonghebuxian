@@ -66,6 +66,7 @@ export class RecordModel {
       user_unit,
       start_date,
       end_date,
+      cable_standard,
       sort_field = 'created_at',
       sort_order = 'desc',
       page = 1,
@@ -118,6 +119,10 @@ export class RecordModel {
     if (user_unit) {
       conditions.push('user_unit LIKE ?');
       values.push(`%${user_unit}%`);
+    }
+    if (cable_standard !== undefined && cable_standard !== null) {
+      conditions.push('cable_standard = ?');
+      values.push(cable_standard);
     }
     if (start_date) {
       conditions.push('created_at >= ?');
@@ -239,5 +244,67 @@ export class RecordModel {
     const stmt = db.prepare('DELETE FROM records');
     const result = stmt.run();
     return result.changes;
+  }
+
+  static findDuplicate(record: Record): Record | undefined {
+    const conditions: string[] = [];
+    const values: any[] = [];
+
+    if (record.idc_requirement_number) {
+      conditions.push('idc_requirement_number = ?');
+      values.push(record.idc_requirement_number);
+    } else if (record.yes_ticket_number) {
+      conditions.push('yes_ticket_number = ?');
+      values.push(record.yes_ticket_number);
+    } else if (record.circuit_number) {
+      conditions.push('circuit_number = ?');
+      values.push(record.circuit_number);
+    } else if (record.record_number) {
+      conditions.push('record_number = ?');
+      values.push(record.record_number);
+    }
+
+    if (conditions.length === 0) {
+      return undefined;
+    }
+
+    const whereClause = conditions.join(' OR ');
+    const stmt = db.prepare(`SELECT * FROM records WHERE ${whereClause} LIMIT 1`);
+    return stmt.get(...values) as Record | undefined;
+  }
+
+  static upsert(record: Record): { id: number; isNew: boolean } {
+    const existing = this.findDuplicate(record);
+
+    if (existing && existing.id) {
+      const updateData: Partial<Record> = { ...record };
+      delete updateData.id;
+      delete updateData.created_at;
+
+      this.update(existing.id, updateData);
+      return { id: existing.id, isNew: false };
+    } else {
+      const id = this.insert(record);
+      return { id, isNew: true };
+    }
+  }
+
+  static batchUpsert(records: Record[]): { inserted: number[]; updated: number[] } {
+    const inserted: number[] = [];
+    const updated: number[] = [];
+
+    const upsertMany = db.transaction((records: Record[]) => {
+      for (const record of records) {
+        const result = this.upsert(record);
+        if (result.isNew) {
+          inserted.push(result.id);
+        } else {
+          updated.push(result.id);
+        }
+      }
+    });
+    upsertMany(records);
+
+    return { inserted, updated };
   }
 }

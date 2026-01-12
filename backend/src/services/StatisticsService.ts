@@ -148,4 +148,51 @@ export class StatisticsService {
       exportDate: new Date().toISOString()
     };
   }
+
+  static getJumpFiberStatistics() {
+    const result = RecordModel.findAll({
+      page: 1,
+      page_size: 10000
+    });
+    
+    const records = result.data;
+    
+    const datacenterGroups = this.groupByField(records, 'datacenter_name');
+    
+    const jumpFiberStats = Object.entries(datacenterGroups).map(([datacenter, dcRecords]) => {
+      const dcRecordsTyped = dcRecords as RecordType[];
+      const total = dcRecordsTyped.length;
+      
+      let inUse = 0;
+      let removed = 0;
+      
+      dcRecordsTyped.forEach(record => {
+        if (record.cable_standard === 1) {
+          inUse++;
+        } else if (record.cable_standard === 0) {
+          removed++;
+        }
+      });
+      
+      const inUseRate = total > 0 ? parseFloat(((inUse / total) * 100).toFixed(2)) : 0;
+      const removedRate = total > 0 ? parseFloat(((removed / total) * 100).toFixed(2)) : 0;
+      
+      return {
+        datacenter,
+        total,
+        inUse,
+        removed,
+        inUseRate,
+        removedRate
+      };
+    });
+    
+    return {
+      datacenters: jumpFiberStats,
+      total: jumpFiberStats.reduce((sum, stat) => sum + stat.total, 0),
+      totalInUse: jumpFiberStats.reduce((sum, stat) => sum + stat.inUse, 0),
+      totalRemoved: jumpFiberStats.reduce((sum, stat) => sum + stat.removed, 0),
+      timestamp: new Date().toISOString()
+    };
+  }
 }

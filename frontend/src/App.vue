@@ -18,6 +18,10 @@
               <el-icon><List /></el-icon>
               <span>布线记录</span>
             </router-link>
+            <router-link to="/statistics/jump-fiber" class="nav-item" active-class="active">
+              <el-icon><DataAnalysis /></el-icon>
+              <span>跳纤统计</span>
+            </router-link>
           </nav>
         </div>
       </el-header>
@@ -29,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { Connection, Upload, List } from '@element-plus/icons-vue';
+import { Connection, Upload, List, DataAnalysis } from '@element-plus/icons-vue';
 </script>
 
 <style scoped>

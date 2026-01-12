@@ -23,12 +23,9 @@ export class RecordController {
       // 解析Excel文件
       const { records, errors } = ExcelParser.parse(file.buffer);
       
-      // 处理解析错误
       if (errors.length > 0) {
-        // 只返回前5个错误，避免响应过大
         const displayErrors = errors.slice(0, 5);
         
-        // 检查是否是严重错误（无法解析文件）
         const hasCriticalError = errors.some(error => 
           error.includes('无法读取Excel文件') || 
           error.includes('无法解析工作表数据')
@@ -43,12 +40,10 @@ export class RecordController {
           });
           return;
         } else {
-          // 非严重错误（如数据验证错误），仍然尝试导入有效记录
           console.warn('Excel解析警告:', errors);
         }
       }
       
-      // 检查是否有有效记录
       if (records.length === 0) {
         res.status(400).json({
           success: false,
@@ -59,32 +54,30 @@ export class RecordController {
         return;
       }
 
-      // 插入记录
-      const insertedIds = RecordModel.batchInsert(records);
+      const { inserted, updated } = RecordModel.batchUpsert(records);
       
-      // 记录操作日志
       await OperationLogService.log({
         operation_type: OperationLogService.OPERATION_TYPES.UPLOAD,
-        operation_content: `上传Excel文件，成功导入 ${insertedIds.length} 条记录`,
+        operation_content: `上传Excel文件，新增 ${inserted.length} 条记录，更新 ${updated.length} 条记录`,
         operation_details: `文件名: ${file.originalname}, 文件大小: ${file.size} bytes`,
         req: req
       });
       
-      // 构建响应
       const response: any = {
         success: true,
-        message: `成功导入 ${insertedIds.length} 条记录`,
+        message: `成功导入 ${inserted.length} 条新记录，更新 ${updated.length} 条记录`,
         data: {
-          count: insertedIds.length,
-          ids: insertedIds
+          insertedCount: inserted.length,
+          updatedCount: updated.length,
+          insertedIds: inserted,
+          updatedIds: updated
         }
       };
       
-      // 如果有警告，添加到响应中
       if (errors.length > 0) {
         response.warnings = {
           count: errors.length,
-          messages: errors.slice(0, 10) // 最多返回10个警告
+          messages: errors.slice(0, 10)
         };
         response.message += `，有 ${errors.length} 条警告信息`;
       }
@@ -121,6 +114,15 @@ export class RecordController {
 
   static async query(req: Request, res: Response): Promise<void> {
     try {
+      let cableStandard: number | undefined;
+      const status = req.query.status as string;
+      
+      if (status === 'inUse') {
+        cableStandard = 1;
+      } else if (status === 'removed') {
+        cableStandard = 0;
+      }
+      
       const params: QueryParams = {
         datacenter_name: req.query.datacenter_name as string,
         record_number: req.query.record_number as string,
@@ -135,6 +137,7 @@ export class RecordController {
         user_unit: req.query.user_unit as string,
         start_date: req.query.start_date as string,
         end_date: req.query.end_date as string,
+        cable_standard: cableStandard,
         sort_field: req.query.sort_field as string,
         sort_order: req.query.sort_order as 'asc' | 'desc',
         page: parseInt(req.query.page as string) || 1,
@@ -348,7 +351,6 @@ export class RecordController {
 
   static async getDatacenterStatistics(req: Request, res: Response): Promise<void> {
     try {
-      // 获取按机房的详细统计数据
       const statistics = StatisticsService.getDatacenterStatistics();
       
       res.json({
@@ -361,6 +363,55 @@ export class RecordController {
         success: false,
         message: '获取机房统计数据失败',
         errorType: 'DATACENTER_STATISTICS_ERROR',
+        errorDetails: error instanceof Error ? error.message : undefined
+      });
+    }
+  }
+
+  static async getJumpFiberStatistics(req: Request, res: Response): Promise<void> {
+    try {
+      const statistics = StatisticsService.getJumpFiberStatistics();
+      
+      res.json({
+        success: true,
+        data: statistics
+      });
+    } catch (error) {
+      console.error('Get jump fiber statistics error:', error);
+      res.status(500).json({
+        success: false,
+        message: '获取跳纤统计数据失败',
+        errorType: 'JUMP_FIBER_STATISTICS_ERROR',
+        errorDetails: error instanceof Error ? error.message : undefined
+      });
+    }
+  }
+
+  static async exportJumpFiberStatistics(req: Request, res: Response): Promise<void> {
+    try {
+      const statistics = StatisticsService.getJumpFiberStatistics();
+      const buffer = DataExporter.exportJumpFiberStatistics(statistics);
+      const fileName = `跳纤统计报表_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+      await OperationLogService.log({
+        operation_type: OperationLogService.OPERATION_TYPES.EXPORT,
+        operation_content: `导出跳纤统计报表，共 ${statistics.datacenters.length} 个机房`,
+        operation_details: `导出格式: excel, 文件名: ${fileName}`,
+        req: req
+      });
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      const encodedFileName = encodeURIComponent(fileName);
+      res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodedFileName}`);
+      res.setHeader('Content-Length', buffer.length);
+
+      res.send(buffer);
+    } catch (error) {
+      console.error('Export jump fiber statistics error:', error);
+      res.status(500).json({
+        success: false,
+        message: '导出跳纤统计报表失败',
+        errorType: 'EXPORT_JUMP_FIBER_STATISTICS_ERROR',
         errorDetails: error instanceof Error ? error.message : undefined
       });
     }

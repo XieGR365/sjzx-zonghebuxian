@@ -121,4 +121,62 @@ export class DataExporter {
 
     return { buffer, mimeType, extension };
   }
+
+  // 导出跳纤统计数据为Excel
+  static exportJumpFiberStatistics(statistics: any): Buffer {
+    const exportData: any[] = [];
+
+    exportData.push({
+      '统计项目': '总体统计',
+      '数值': statistics.total,
+      '说明': '所有机房的跳纤总数'
+    });
+
+    exportData.push({
+      '统计项目': '在用线路总数',
+      '数值': statistics.totalInUse,
+      '说明': '所有机房的在用线路数量'
+    });
+
+    exportData.push({
+      '统计项目': '已拆除线路总数',
+      '数值': statistics.totalRemoved,
+      '说明': '所有机房的已拆除线路数量'
+    });
+
+    exportData.push({});
+
+    exportData.push({
+      '机房名称': '机房名称',
+      '跳纤总数': '跳纤总数',
+      '在用线路': '在用线路',
+      '在用比例': '在用比例',
+      '已拆除线路': '已拆除线路',
+      '已拆除比例': '已拆除比例'
+    });
+
+    statistics.datacenters.forEach((dc: any) => {
+      exportData.push({
+        '机房名称': dc.datacenter,
+        '跳纤总数': dc.total,
+        '在用线路': dc.inUse,
+        '在用比例': `${dc.inUseRate}%`,
+        '已拆除线路': dc.removed,
+        '已拆除比例': `${dc.removedRate}%`
+      });
+    });
+
+    exportData.push({});
+
+    exportData.push({
+      '导出时间': new Date().toLocaleString('zh-CN'),
+      '数据来源': '综合布线记录管理系统'
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, '跳纤统计');
+    
+    return Buffer.from(XLSX.write(workbook, { bookType: 'xlsx', type: 'buffer' }));
+  }
 }
