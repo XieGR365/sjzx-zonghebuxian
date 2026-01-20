@@ -1,4 +1,5 @@
-FROM node:18-alpine as builder
+ARG NODE_IMAGE=node:18-alpine
+FROM ${NODE_IMAGE} as builder
 
 WORKDIR /app
 
@@ -8,7 +9,8 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-FROM nginx:alpine
+ARG NGINX_IMAGE=nginx:alpine
+FROM ${NGINX_IMAGE}
 
 COPY --from=builder /app/dist /usr/share/nginx/html
 
