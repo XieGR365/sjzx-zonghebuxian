@@ -51,3 +51,7 @@ pnpm-lock.yaml
 
 # 构建产物
 *.tsbuildinfo
+
+# 安装包目录（Docker安装包等二进制文件）
+安装包/
+
