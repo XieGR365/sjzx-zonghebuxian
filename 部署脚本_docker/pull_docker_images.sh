@@ -65,10 +65,10 @@ configure_mirror() {
     sudo tee /etc/docker/daemon.json > /dev/null <<-'EOF'
 {
   "registry-mirrors": [
+    "https://docker.m.daocloud.io",
+    "https://dockerproxy.com",
     "https://docker.mirrors.ustc.edu.cn",
-    "https://hub-mirror.c.163.com",
-    "https://mirror.ccs.tencentyun.com",
-    "https://dockerproxy.com"
+    "https://hub-mirror.c.163.com"
   ],
   "dns": ["8.8.8.8", "114.114.114.114"]
 }

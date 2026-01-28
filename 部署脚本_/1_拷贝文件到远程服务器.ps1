@@ -1,4 +1,4 @@
-<################################################################################
+################################################################################
 # 综合布线记录管理系统 - SSH文件拷贝脚本
 # 
 # 功能说明：
@@ -19,7 +19,7 @@
 
 # 配置变量
 $REMOTE_HOST = "192.168.19.58"
-$REMOTE_USER = "root"
+$REMOTE_USER = "yroot"
 $REMOTE_DIR = "~/sjzx-zonghebuxian"
 $LOCAL_DIR = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
@@ -372,7 +372,7 @@ function Test-CopyResult {
     $allOk = $true
     
     # 验证后端文件
-    $backendCheck = Invoke-SSH "[ -d $REMOTE_DIR/backend ] && [ -f $REMOTE_DIR/backend/package.json ]"
+    $backendCheck = Invoke-SSH "test -d $REMOTE_DIR/backend ; test -f $REMOTE_DIR/backend/package.json"
     if ($LASTEXITCODE -ne 0) {
         Write-Error "后端文件验证失败"
         $allOk = $false
@@ -381,7 +381,7 @@ function Test-CopyResult {
     }
     
     # 验证前端文件
-    $frontendCheck = Invoke-SSH "[ -d $REMOTE_DIR/frontend ] && [ -f $REMOTE_DIR/frontend/package.json ]"
+    $frontendCheck = Invoke-SSH "test -d $REMOTE_DIR/frontend ; test -f $REMOTE_DIR/frontend/package.json"
     if ($LASTEXITCODE -ne 0) {
         Write-Error "前端文件验证失败"
         $allOk = $false
