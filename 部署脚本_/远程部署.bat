@@ -1,5 +1,4 @@
 @echo off
-chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 echo ========================================
@@ -7,7 +6,7 @@ echo Remote Deployment Script
 echo ========================================
 echo.
 echo This script will deploy your application
-echo to the remote Linux server automatically.
+echo to remote Linux server automatically.
 echo.
 echo Server Information:
 echo   IP: 192.168.19.58
