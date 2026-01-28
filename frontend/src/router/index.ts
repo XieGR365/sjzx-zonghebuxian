@@ -36,7 +36,7 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   document.title = `${to.meta.title || '综合布线记录管理系统'} - 综合布线记录管理系统`;
   next();
 });

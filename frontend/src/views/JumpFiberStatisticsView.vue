@@ -145,8 +145,8 @@
                 :page-sizes="[10, 20, 50]"
                 :total="getDetailPagination(stat.datacenter, expandedStatus).total"
                 layout="total, sizes, prev, pager, next"
-                @size-change="(size) => handlePageSizeChange(stat.datacenter, size)"
-                @current-change="(page) => handlePageChange(stat.datacenter, page)"
+                @size-change="(size: number) => handlePageSizeChange(stat.datacenter, size)"
+                @current-change="(page: number) => handlePageChange(stat.datacenter, page)"
                 style="margin-top: 16px; justify-content: flex-end"
                 small
               />
