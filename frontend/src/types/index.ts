@@ -38,6 +38,7 @@ export interface QueryParams {
   idc_requirement_number?: string;
   yes_ticket_number?: string;
   user_unit?: string;
+  status?: string;
   page?: number;
   page_size?: number;
 }

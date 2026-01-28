@@ -162,7 +162,7 @@ import { ref, computed, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { Download, Refresh, Search, Loading, OfficeBuilding } from '@element-plus/icons-vue';
 import { recordApi } from '@/services/api';
-import type { Record } from '@/types';
+import type { Record, QueryParams } from '@/types';
 
 interface JumpFiberStat {
   datacenter: string;
@@ -258,7 +258,7 @@ const loadDetailRecords = async (datacenter: string, status: string) => {
 
   detailLoading.value = true;
   try {
-    const queryParams: any = {
+    const queryParams: QueryParams = {
       datacenter_name: datacenter,
       page: 1,
       page_size: 10,
