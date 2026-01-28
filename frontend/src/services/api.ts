@@ -3,19 +3,28 @@ import type { ApiResponse, Record, QueryParams, QueryResult, FilterOptions } fro
 
 const api = axios.create({
   baseURL: '/api',
-  timeout: 30000
+  timeout: 30000,
 });
 
 api.interceptors.response.use(
-  response => response.data,
-  error => {
+  (response) => response.data,
+  (error) => {
     console.error('API Error:', error);
     return Promise.reject(error);
   }
 );
 
 export const recordApi = {
-  upload: (file: File): Promise<ApiResponse<{ insertedCount: number; updatedCount: number; insertedIds: number[]; updatedIds: number[] }>> => {
+  upload: (
+    file: File
+  ): Promise<
+    ApiResponse<{
+      insertedCount: number;
+      updatedCount: number;
+      insertedIds: number[];
+      updatedIds: number[];
+    }>
+  > => {
     const formData = new FormData();
     formData.append('file', file);
     return api.post('/records/upload', formData);
@@ -44,7 +53,7 @@ export const recordApi = {
   export: (params: QueryParams, format: string = 'excel'): Promise<Blob> => {
     return api.get('/records/export', {
       params: { ...params, format },
-      responseType: 'blob'
+      responseType: 'blob',
     });
   },
 
@@ -54,9 +63,9 @@ export const recordApi = {
 
   exportJumpFiberStatistics: (): Promise<Blob> => {
     return api.get('/records/statistics/jump-fiber/export', {
-      responseType: 'blob'
+      responseType: 'blob',
     });
-  }
+  },
 };
 
 export default api;

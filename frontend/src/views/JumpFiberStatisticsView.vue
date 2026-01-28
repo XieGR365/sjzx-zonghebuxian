@@ -24,21 +24,11 @@
             style="width: 200px"
           >
             <el-option label="全部机房" value="" />
-            <el-option
-              v-for="dc in datacenters"
-              :key="dc"
-              :label="dc"
-              :value="dc"
-            />
+            <el-option v-for="dc in datacenters" :key="dc" :label="dc" :value="dc" />
           </el-select>
         </el-form-item>
         <el-form-item label="线路状态">
-          <el-select
-            v-model="filters.status"
-            placeholder="全部状态"
-            clearable
-            style="width: 150px"
-          >
+          <el-select v-model="filters.status" placeholder="全部状态" clearable style="width: 150px">
             <el-option label="全部状态" value="" />
             <el-option label="在用" value="inUse" />
             <el-option label="已拆除" value="removed" />
@@ -77,15 +67,18 @@
               <el-tag type="info" size="small">共 {{ stat.total }} 条</el-tag>
             </div>
           </template>
-          
+
           <div class="statistics-content">
             <div class="total-section" @click.stop="viewDatacenterDetails(stat.datacenter, '')">
               <div class="total-label">跳纤总数</div>
               <div class="total-value">{{ stat.total }}</div>
             </div>
-            
+
             <div class="status-section">
-              <div class="status-item in-use" @click.stop="viewDatacenterDetails(stat.datacenter, 'inUse')">
+              <div
+                class="status-item in-use"
+                @click.stop="viewDatacenterDetails(stat.datacenter, 'inUse')"
+              >
                 <div class="status-header">
                   <span class="status-label">在用线路</span>
                   <el-tag type="success" size="small">{{ stat.inUse }}</el-tag>
@@ -98,8 +91,11 @@
                 />
                 <div class="status-rate">{{ stat.inUseRate }}%</div>
               </div>
-              
-              <div class="status-item removed" @click.stop="viewDatacenterDetails(stat.datacenter, 'removed')">
+
+              <div
+                class="status-item removed"
+                @click.stop="viewDatacenterDetails(stat.datacenter, 'removed')"
+              >
                 <div class="status-header">
                   <span class="status-label">已拆除线路</span>
                   <el-tag type="danger" size="small">{{ stat.removed }}</el-tag>
@@ -113,15 +109,18 @@
                 <div class="status-rate">{{ stat.removedRate }}%</div>
               </div>
             </div>
-            
-            <div class="detail-section" v-if="expandedDatacenter === stat.datacenter && expandedStatus !== ''">
+
+            <div
+              v-if="expandedDatacenter === stat.datacenter && expandedStatus !== ''"
+              class="detail-section"
+            >
               <div class="detail-header">
                 <span>{{ getStatusText(expandedStatus) }}</span>
                 <el-button type="text" size="small" @click.stop="closeDetail">关闭</el-button>
               </div>
               <el-table
-                :data="getDetailRecords(stat.datacenter, expandedStatus)"
                 v-loading="detailLoading"
+                :data="getDetailRecords(stat.datacenter, expandedStatus)"
                 stripe
                 border
                 size="small"
@@ -137,7 +136,7 @@
                 <el-table-column prop="execution_date" label="执行日期" width="100" />
                 <el-table-column prop="remark" label="备注" min-width="120" show-overflow-tooltip />
               </el-table>
-              
+
               <el-pagination
                 v-if="getDetailPagination(stat.datacenter, expandedStatus).total > 0"
                 v-model:current-page="getDetailPagination(stat.datacenter, expandedStatus).page"
@@ -145,10 +144,10 @@
                 :page-sizes="[10, 20, 50]"
                 :total="getDetailPagination(stat.datacenter, expandedStatus).total"
                 layout="total, sizes, prev, pager, next"
-                @size-change="(size: number) => handlePageSizeChange(stat.datacenter, size)"
-                @current-change="(page: number) => handlePageChange(stat.datacenter, page)"
                 style="margin-top: 16px; justify-content: flex-end"
                 small
+                @size-change="(size: number) => handlePageSizeChange(stat.datacenter, size)"
+                @current-change="(page: number) => handlePageChange(stat.datacenter, page)"
               />
             </div>
           </div>
@@ -186,7 +185,7 @@ const loading = ref(false);
 const statistics = ref<JumpFiberStatistics | null>(null);
 const filters = ref({
   datacenter: '',
-  status: ''
+  status: '',
 });
 
 const activeDatacenters = ref<string[]>([]);
@@ -194,28 +193,30 @@ const expandedDatacenter = ref('');
 const expandedStatus = ref('');
 const detailLoading = ref(false);
 const datacenterRecordsMap = ref<Map<string, Record[]>>(new Map());
-const datacenterPaginationMap = ref<Map<string, { page: number; page_size: number; total: number }>>(new Map());
+const datacenterPaginationMap = ref<
+  Map<string, { page: number; page_size: number; total: number }>
+>(new Map());
 
 const datacenters = computed(() => {
   if (!statistics.value) return [];
-  return statistics.value.datacenters.map(stat => stat.datacenter);
+  return statistics.value.datacenters.map((stat) => stat.datacenter);
 });
 
 const filteredDatacenters = computed(() => {
   if (!statistics.value) return [];
-  
+
   let result = statistics.value.datacenters;
-  
+
   if (filters.value.datacenter) {
-    result = result.filter(stat => stat.datacenter === filters.value.datacenter);
+    result = result.filter((stat) => stat.datacenter === filters.value.datacenter);
   }
-  
+
   if (filters.value.status === 'inUse') {
-    result = result.filter(stat => stat.inUse > 0);
+    result = result.filter((stat) => stat.inUse > 0);
   } else if (filters.value.status === 'removed') {
-    result = result.filter(stat => stat.removed > 0);
+    result = result.filter((stat) => stat.removed > 0);
   }
-  
+
   return result;
 });
 
@@ -254,28 +255,28 @@ const loadStatistics = async () => {
 
 const loadDetailRecords = async (datacenter: string, status: string) => {
   if (!datacenter) return;
-  
+
   detailLoading.value = true;
   try {
     const queryParams: any = {
       datacenter_name: datacenter,
       page: 1,
-      page_size: 10
+      page_size: 10,
     };
-    
+
     if (status) {
       queryParams.status = status;
     }
-    
+
     const response = await recordApi.query(queryParams);
-    
+
     if (response.success && response.data) {
       const key = `${datacenter}-${status}`;
       datacenterRecordsMap.value.set(key, response.data.data);
       datacenterPaginationMap.value.set(key, {
         page: response.data.page,
         page_size: response.data.page_size,
-        total: response.data.total
+        total: response.data.total,
       });
     } else {
       ElMessage.error(response.message || '加载详细数据失败');
@@ -288,13 +289,12 @@ const loadDetailRecords = async (datacenter: string, status: string) => {
   }
 };
 
-const applyFilters = () => {
-};
+const applyFilters = () => {};
 
 const resetFilters = () => {
   filters.value = {
     datacenter: '',
-    status: ''
+    status: '',
   };
 };
 
@@ -329,16 +329,16 @@ const closeDetail = () => {
 const viewDatacenterDetails = (datacenter: string, status: string) => {
   expandedDatacenter.value = datacenter;
   expandedStatus.value = status;
-  
+
   loadDetailRecords(datacenter, status);
 };
 
 const exportStatistics = async () => {
   try {
     ElMessage.info('正在导出报表，请稍候...');
-    
+
     const blob = await recordApi.exportJumpFiberStatistics();
-    
+
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -347,7 +347,7 @@ const exportStatistics = async () => {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-    
+
     ElMessage.success('报表导出成功');
   } catch (error) {
     console.error('Export statistics error:', error);
@@ -548,12 +548,12 @@ onMounted(() => {
 }
 
 .status-item.in-use:hover {
-  border-color: #67C23A;
+  border-color: #67c23a;
   background: linear-gradient(135deg, #f0f9ff 0%, #e8f4ff 100%);
 }
 
 .status-item.removed:hover {
-  border-color: #F56C6C;
+  border-color: #f56c6c;
   background: linear-gradient(135deg, #fef0f0 0%, #fee 100%);
 }
 

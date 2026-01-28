@@ -72,7 +72,7 @@
         :title="uploadResult.success ? '上传成功' : '上传失败'"
         :sub-title="uploadResult.message"
       >
-        <template #extra v-if="uploadResult.success && uploadResult.data">
+        <template v-if="uploadResult.success && uploadResult.data" #extra>
           <div class="statistics-container">
             <el-row :gutter="20">
               <el-col :span="12">
@@ -110,7 +110,16 @@ const uploadRef = ref();
 const fileList = ref<UploadUserFile[]>([]);
 const selectedFile = ref<File | null>(null);
 const uploading = ref(false);
-const uploadResult = ref<{ success: boolean; message: string; data?: { insertedCount: number; updatedCount: number; insertedIds: number[]; updatedIds: number[] } } | null>(null);
+const uploadResult = ref<{
+  success: boolean;
+  message: string;
+  data?: {
+    insertedCount: number;
+    updatedCount: number;
+    insertedIds: number[];
+    updatedIds: number[];
+  };
+} | null>(null);
 
 const handleFileChange = (file: UploadFile) => {
   if (file.raw) {
@@ -124,7 +133,7 @@ const formatFileSize = (bytes: number): string => {
   const k = 1024;
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+  return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
 };
 
 const handleUpload = async () => {
@@ -141,7 +150,7 @@ const handleUpload = async () => {
     uploadResult.value = {
       success: response.success,
       message: response.message || '上传成功',
-      data: response.data
+      data: response.data,
     };
 
     if (response.success) {
@@ -152,7 +161,7 @@ const handleUpload = async () => {
   } catch (error: any) {
     uploadResult.value = {
       success: false,
-      message: error.response?.data?.message || '上传失败，请稍后重试'
+      message: error.response?.data?.message || '上传失败，请稍后重试',
     };
     ElMessage.error(error.response?.data?.message || '上传失败，请稍后重试');
   } finally {
@@ -212,12 +221,12 @@ const goToRecords = () => {
 }
 
 :deep(.el-upload-dragger:hover) {
-  border-color: #409EFF;
+  border-color: #409eff;
   background: linear-gradient(135deg, #ecf5ff 0%, #ffffff 100%);
 }
 
 .upload-icon {
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 16px;
 }
 

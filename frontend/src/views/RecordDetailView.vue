@@ -1,6 +1,6 @@
 <template>
   <div class="detail-view">
-    <el-card class="detail-card" shadow="hover" v-loading="loading">
+    <el-card v-loading="loading" class="detail-card" shadow="hover">
       <template #header>
         <div class="card-header">
           <el-button link @click="goBack">
@@ -78,39 +78,39 @@
               <div class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
-              <div class="port-node" v-if="record.hop1">
+              <div v-if="record.hop1" class="port-node">
                 <div class="port-label">一跳</div>
                 <div class="port-value">{{ record.hop1 }}</div>
               </div>
-              <div class="port-arrow" v-if="record.hop1">
+              <div v-if="record.hop1" class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
-              <div class="port-node" v-if="record.hop2">
+              <div v-if="record.hop2" class="port-node">
                 <div class="port-label">二跳</div>
                 <div class="port-value">{{ record.hop2 }}</div>
               </div>
-              <div class="port-arrow" v-if="record.hop2">
+              <div v-if="record.hop2" class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
-              <div class="port-node" v-if="record.hop3">
+              <div v-if="record.hop3" class="port-node">
                 <div class="port-label">三跳</div>
                 <div class="port-value">{{ record.hop3 }}</div>
               </div>
-              <div class="port-arrow" v-if="record.hop3">
+              <div v-if="record.hop3" class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
-              <div class="port-node" v-if="record.hop4">
+              <div v-if="record.hop4" class="port-node">
                 <div class="port-label">四跳</div>
                 <div class="port-value">{{ record.hop4 }}</div>
               </div>
-              <div class="port-arrow" v-if="record.hop4">
+              <div v-if="record.hop4" class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
-              <div class="port-node" v-if="record.hop5">
+              <div v-if="record.hop5" class="port-node">
                 <div class="port-label">五跳</div>
                 <div class="port-value">{{ record.hop5 }}</div>
               </div>
-              <div class="port-arrow" v-if="record.hop5">
+              <div v-if="record.hop5" class="port-arrow">
                 <el-icon><ArrowRight /></el-icon>
               </div>
               <div class="port-node">
@@ -142,7 +142,7 @@
             </el-descriptions>
           </div>
 
-          <div class="detail-section" v-if="record.remark">
+          <div v-if="record.remark" class="detail-section">
             <h3 class="section-title">
               <el-icon><ChatDotRound /></el-icon>
               备注
@@ -187,7 +187,7 @@ import {
   ArrowRight,
   OfficeBuilding,
   ChatDotRound,
-  Clock
+  Clock,
 } from '@element-plus/icons-vue';
 import { recordApi } from '@/services/api';
 import type { Record } from '@/types';
@@ -228,8 +228,8 @@ const goBack = () => {
     path: '/records',
     query: {
       page: page.toString(),
-      page_size: pageSize.toString()
-    }
+      page_size: pageSize.toString(),
+    },
   });
 };
 
@@ -242,7 +242,7 @@ const formatDate = (dateStr: string | undefined) => {
     day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
-    second: '2-digit'
+    second: '2-digit',
   });
 };
 
@@ -292,7 +292,7 @@ onMounted(() => {
   gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  color: #409EFF;
+  color: #409eff;
   margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid #e4e7ed;
@@ -337,12 +337,12 @@ onMounted(() => {
 }
 
 .port-value:hover {
-  border-color: #409EFF;
+  border-color: #409eff;
   box-shadow: 0 4px 8px rgba(64, 158, 255, 0.2);
 }
 
 .port-arrow {
-  color: #409EFF;
+  color: #409eff;
   font-size: 20px;
 }
 

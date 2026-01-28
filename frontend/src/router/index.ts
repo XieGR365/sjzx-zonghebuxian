@@ -3,37 +3,37 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    redirect: '/upload'
+    redirect: '/upload',
   },
   {
     path: '/upload',
     name: 'Upload',
     component: () => import('@/views/UploadView.vue'),
-    meta: { title: '上传文件' }
+    meta: { title: '上传文件' },
   },
   {
     path: '/records',
     name: 'Records',
     component: () => import('@/views/RecordsView.vue'),
-    meta: { title: '布线记录' }
+    meta: { title: '布线记录' },
   },
   {
     path: '/records/:id',
     name: 'RecordDetail',
     component: () => import('@/views/RecordDetailView.vue'),
-    meta: { title: '记录详情' }
+    meta: { title: '记录详情' },
   },
   {
     path: '/statistics/jump-fiber',
     name: 'JumpFiberStatistics',
     component: () => import('@/views/JumpFiberStatisticsView.vue'),
-    meta: { title: '跳纤统计' }
-  }
+    meta: { title: '跳纤统计' },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes
+  routes,
 });
 
 router.beforeEach((to, _from, next) => {

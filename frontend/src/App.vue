@@ -106,7 +106,7 @@ import { Connection, Upload, List, DataAnalysis } from '@element-plus/icons-vue'
 
 .nav-item:hover {
   background: #f5f7fa;
-  color: #409EFF;
+  color: #409eff;
 }
 
 .nav-item.active {
@@ -130,7 +130,8 @@ import { Connection, Upload, List, DataAnalysis } from '@element-plus/icons-vue'
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
