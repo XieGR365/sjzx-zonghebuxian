@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # 后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: wiring-backend
+    ports:
+      - "${BACKEND_PORT:-3001}:${BACKEND_INTERNAL_PORT:-3001}"
+    volumes:
+      - ${DB_DIR:-./backend/data}:/app/data
+      - ${UPLOAD_DIR:-./backend/uploads}:/app/uploads
+      - ${LOG_DIR:-./logs}:/app/logs
+    environment:
+      - NODE_ENV=production
+      - PORT=${BACKEND_INTERNAL_PORT:-3001}
+      - DB_PATH=/app/data/wiring.db
+      - UPLOAD_DIR=/app/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${BACKEND_INTERNAL_PORT:-3001}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wiring-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 前端服务
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: wiring-frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:${FRONTEND_INTERNAL_PORT:-80}"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      - VITE_API_BASE_URL=http://backend:${BACKEND_INTERNAL_PORT:-3001}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${FRONTEND_INTERNAL_PORT:-80}/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - wiring-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  wiring-network:
+    driver: bridge
+
+volumes:
+  wiring-data:
+    driver: local
+  wiring-uploads:
+    driver: local
+  wiring-logs:
+    driver: local
